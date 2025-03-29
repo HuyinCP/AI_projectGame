@@ -11,7 +11,7 @@ class ObjectRenderer:
         self.screen = game.screen
         # Tải các texture (hình ảnh) của bức tường và lưu vào self.wall_textures
         self.wall_textures = self.load_wall_textures()
-        self.sky_image = self.get_texture(r"D:\DO AN CAC MON\AI_projectGame\resources\textures\sky3.png", (WIDTH, HALF_HEIGHT))
+        self.sky_image = self.get_texture(r"resources\textures\sky3.png", (WIDTH, HALF_HEIGHT))
         self.sky_offset = 0
 
     # Phương thức chính để vẽ tất cả các đối tượng trong mỗi khung hình
@@ -51,9 +51,9 @@ class ObjectRenderer:
         # - Key: Số nguyên (1, 2, 3,...) đại diện cho loại bức tường
         # - Value: Texture (hình ảnh) tương ứng, được tải bằng get_texture
         return {
-            1: self.get_texture(r'D:\DO AN CAC MON\AI_projectGame\resources\textures\1.png'),
-            2: self.get_texture(r'D:\DO AN CAC MON\AI_projectGame\resources\textures\2.png'),
-            3: self.get_texture(r'D:\DO AN CAC MON\AI_projectGame\resources\textures\3.png'),
-            4: self.get_texture(r'D:\DO AN CAC MON\AI_projectGame\resources\textures\4.png'),
-            5: self.get_texture(r'D:\DO AN CAC MON\AI_projectGame\resources\textures\5.png'),
+            1: self.get_texture(r'resources\textures\1.png'),
+            2: self.get_texture(r'resources\textures\2.png'),
+            3: self.get_texture(r'resources\textures\3.png'),
+            4: self.get_texture(r'resources\textures\4.png'),
+            5: self.get_texture(r'resources\textures\5.png'),
         }
