@@ -36,12 +36,12 @@ class ObjectRenderer:
             # Vẽ hình ảnh (image) lên màn hình tại vị trí pos (tọa độ x, y)
             # depth là khoảng cách, image là cột texture, pos là vị trí trên màn hình
             self.screen.blit(image, pos)
-
+    #
     @staticmethod
     def get_texture(path, res=(TEXTURE_SIZE, TEXTURE_SIZE)):
         # Tải hình ảnh từ đường dẫn path và chuyển đổi để hỗ trợ độ trong suốt (alpha channel)
         texture = pg.image.load(path).convert_alpha()
-        # Điều chỉnh kích thước của texture thành res (mặc định là TEXTURE_SIZE x TEXTURE_SIZE)
+        # Điều chỉnh kích thước của texture thànres (mặc định là TEXTURE_SIZE x TEXTURE_SIZE)
         # Sau đó trả về texture đã được thay đổi kích thước
         return pg.transform.scale(texture, res)
     

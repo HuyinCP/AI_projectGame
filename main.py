@@ -7,6 +7,7 @@ from player import *
 from raycasting import *
 from player import *
 from weapon import *
+from sprite_objects import *
 from map import *
 
 class Game:
@@ -24,7 +25,7 @@ class Game:
         #Lưu trữ thời gian trôi qua giữa các Frame
         self.delta_time = 1 
 
-        self.weapon = Weapon(self)
+        # self.weapon = Weapon(self)
 
         #gọi hàm new_game để khởi tạo các đối tượng nhân vật, bản đồ, hoặc là npc ...
         self.new_game() 
@@ -39,12 +40,11 @@ class Game:
         #cập nhật trạng thái của đối tượng Player
         self.player.update() 
         self.raycasting.update()
-        
         #cập nhật toàn bộ khung hình game
         pg.display.flip() 
 
+        # self.weapon.update()
         #kiểm soát tốc độ khug hình theo giá trị FPS
-        self.weapon.update()
         self.delta_time = self.clock.tick(FPS) 
         
         pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
@@ -52,10 +52,10 @@ class Game:
     
     def draw(self):
         self.screen.fill('black')
-        self.object_renderer.draw()
-        self.weapon.draw()
-        # self.map.draw() #vẽ map 2D
-        # self.player.draw() #vẽ chấm xanh người chơi
+        # self.object_renderer.draw()
+        # self.weapon.draw()
+        self.map.draw() #vẽ map 2D
+        self.player.draw() #vẽ chấm xanh người chơi
 
     def check_event(self):
         for event in pg.event.get():

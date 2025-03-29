@@ -89,7 +89,7 @@ class Raycasting:
         x_map, y_map = self.game.player.map_pos
 
         # Tính góc của tia đầu tiên: góc của người chơi trừ nửa góc nhìn (FOV) cộng một giá trị nhỏ để tránh lỗi
-        ray_angle = self.game.player.angle - HALF_FOV + 0.001
+        ray_angle = self.game.player.angle - HALF_FOV + 0.0001
 
         # Duyệt qua từng tia (ray), tổng cộng NUM_RAYS tia
         for ray in range(NUM_RAYS):
@@ -100,7 +100,7 @@ class Raycasting:
             # Tính giao điểm ngang (horizontal intersection)
             # - Nếu sin_a > 0: Tia hướng xuống dưới, kiểm tra ô bên dưới (y_map + 1)
             # - Nếu sin_a < 0: Tia hướng lên trên, kiểm tra ô bên trên (y_map - 1e-15)
-            y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-15, -1)
+            y_hor, dy = (y_map + 1, 1) if sin_a > 0 else (y_map - 1e-6, -1)
 
             # Tính khoảng cách đến giao điểm ngang đầu tiên
             depth_h = (y_hor - oy) / sin_a
@@ -132,7 +132,7 @@ class Raycasting:
             # Tính giao điểm dọc (vertical intersection)
             # - Nếu cos_a > 0: Tia hướng sang phải, kiểm tra ô bên phải (x_map + 1)
             # - Nếu cos_a < 0: Tia hướng sang trái, kiểm tra ô bên trái (x_map - 1e-15)
-            x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-15, -1)
+            x_vert, dx = (x_map + 1, 1) if cos_a > 0 else (x_map - 1e-6, -1)
 
             # Tính khoảng cách đến giao điểm dọc đầu tiên
             depth_vert = (x_vert - ox) / cos_a
@@ -198,7 +198,7 @@ class Raycasting:
             # - SCREEN_DIST: Khoảng cách từ người chơi đến màn hình (hằng số)
             # - depth: Khoảng cách đến bức tường
             # - 0.0001: Giá trị nhỏ để tránh chia cho 0
-            project_hight = (SCREEN_DIST * 1) / (depth + 0.0001)
+            project_hight = (SCREEN_DIST * 1) / (depth + 0.001)
 
             # Đoạn mã vẽ cột màu đã bị comment (không dùng nữa)
             # Trước đây, vẽ cột tường bằng màu đơn sắc dựa trên khoảng cách
@@ -207,7 +207,7 @@ class Raycasting:
             
             # Đoạn mã vẽ tia (dùng để debug) (không dùng nữa)
             # Vẽ một đường màu vàng từ vị trí người chơi đến điểm giao
-            # pg.draw.line(self.game.screen, 'yellow', (100*ox, 100*oy), (100 * ox + 100 * depth * cos_a, 100 * oy + 100 * depth * sin_a), 2)
+            pg.draw.line(self.game.screen, 'yellow', (100*ox, 100*oy), (100 * ox + 100 * depth * cos_a, 100 * oy + 100 * depth * sin_a), 2)
             
             # Lưu kết quả raycasting của tia hiện tại vào self.ray_casting_result
             # Tuple chứa: (depth, project_hight, texture, offset)
