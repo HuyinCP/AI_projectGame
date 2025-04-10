@@ -9,6 +9,8 @@ from player import *
 from weapon import *
 from sprite_objects import *
 from map import *
+from object_handler import *
+from sound import *
 
 class Game:
     def __init__(self):
@@ -35,11 +37,20 @@ class Game:
         self.player = Player(self)
         self.object_renderer = ObjectRenderer(self)
         self.raycasting = Raycasting(self)
+        # self.static_sprite = SpriteObject(self)
+        # self.animated_sprite = AnimatedSprite(self)
+        self.object_handler = ObjectHandler(self)
+        self.weapon = Weapon(self)
+        self.sound = Sound(self)
 
     def update(self):   
         #cập nhật trạng thái của đối tượng Player
         self.player.update() 
         self.raycasting.update()
+        # self.static_sprite.update()
+        # self.animated_sprite.update()
+        self.object_handler.update()
+        self.weapon.update()
         #cập nhật toàn bộ khung hình game
         pg.display.flip() 
 
@@ -54,6 +65,7 @@ class Game:
         self.screen.fill('black')
         # self.object_renderer.draw()
         # self.weapon.draw()
+        # self.weapon.draw()
         self.map.draw() #vẽ map 2D
         self.player.draw() #vẽ chấm xanh người chơi
 
@@ -62,6 +74,7 @@ class Game:
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE) :
                 pg.quit()
                 sys.exit()
+            self.player.single_fire_event(event)
 
     def run(self):
         while True:
@@ -69,6 +82,7 @@ class Game:
             self.update()
             self.draw()
 
+    
 
 
 if __name__ == '__main__':

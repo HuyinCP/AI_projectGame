@@ -31,7 +31,7 @@ class ObjectRenderer:
     def render_game_object(self):
         # Lấy danh sách các đối tượng cần vẽ từ Raycasting (self.game.raycasting.objects_to_render)
         # Mỗi đối tượng là một tuple (depth, image, pos)
-        list_objects = self.game.raycasting.objects_to_render
+        list_objects = sorted(self.game.raycasting.objects_to_render, key=lambda t : t[0], reverse=True)
         for depth, image, pos in list_objects:
             # Vẽ hình ảnh (image) lên màn hình tại vị trí pos (tọa độ x, y)
             # depth là khoảng cách, image là cột texture, pos là vị trí trên màn hình
