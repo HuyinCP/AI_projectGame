@@ -9,8 +9,8 @@ Dự án này là một game 3D raycasting được lấy cảm hứng từ *Wol
 - **Môi trường maze**: Các cấp độ trong game có dạng mê cung mà người chơi phải điều hướng qua.
 - **Điều khiển bằng chuột**: Cho phép người chơi nhìn xung quanh và điều hướng trong thế giới game.
 
-## Ảnh chụp màn hình
-![Ảnh game](sreenshots.png)
+## Screenshot
+![Game Screenshot](sreenshots.png)
 
 ## Thành viên nhóm
 - **Nghiêm Quang Huy**: 23110222
