@@ -51,6 +51,7 @@ class Game:
         self.weapon.draw()
         # self.map.draw()
         # self.player.draw()
+        self.object_renderer.draw_minimap()
 
     def check_events(self):
         self.global_trigger = False

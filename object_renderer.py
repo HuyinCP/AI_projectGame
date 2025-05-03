@@ -62,3 +62,31 @@ class ObjectRenderer:
             4: self.get_texture('resources/textures/4.png'),
             5: self.get_texture('resources/textures/5.png'),
         }
+    
+    def draw_minimap(self):
+        # Mini-map settings
+        map_scale = 5  # Scale factor for the mini-map
+        map_size = 150  # Size of the mini-map
+        map_offset = 50  # Offset from the top-left corner
+        player_color = (0, 255, 0)  # Green for player
+        npc_color = (255, 0, 0)  # Red for NPCs
+        wall_color = (255, 255, 255)  # White for walls
+
+        # Draw the mini-map background
+        pg.draw.rect(self.game.screen, (0, 0, 0), (map_offset, map_offset, map_size, map_size))
+
+        # Draw walls
+        for x, y in self.game.map.world_map:
+            rect = (map_offset + x * map_scale, map_offset + y * map_scale, map_scale, map_scale)
+            pg.draw.rect(self.game.screen, wall_color, rect)
+
+        # Draw NPCs
+        for npc in self.game.object_handler.npc_list:
+            if npc.alive:
+                rect = (map_offset + npc.x * map_scale, map_offset + npc.y * map_scale, map_scale, map_scale)
+                pg.draw.rect(self.game.screen, npc_color, rect)
+
+        # Draw player
+        player_x, player_y = self.game.player.x, self.game.player.y
+        player_rect = (map_offset + player_x * map_scale, map_offset + player_y * map_scale, map_scale, map_scale)
+        pg.draw.rect(self.game.screen, player_color, player_rect)
