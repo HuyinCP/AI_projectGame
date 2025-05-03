@@ -102,7 +102,7 @@ class NPC(AnimatedSprite):
 
                 if self.dist < 1:
                     self.animate(self.attack_images)
-                    # self.attack()
+                    self.attack()
                 else:
                     self.animate(self.walk_images)
                     self.movement()
