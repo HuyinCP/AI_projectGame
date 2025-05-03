@@ -1,6 +1,6 @@
 # Game DOOM-style 3D Raycasting với AI NPC
 
-Dự án này là một game 3D raycasting được lấy cảm hứng từ *Wolfenstein 3D*, được thực hiện như một đồ án cuối kỳ môn AI. Game mô phỏng môi trường FPS (first-person shooter) với kỹ thuật raycasting để render không gian 3D trên mặt phẳng 2D. Các NPC trong game sử dụng các thuật toán tìm kiếm (như A* hoặc Dijkstra) để tìm và đuổi theo người chơi.
+Dự án này là một game 3D raycasting được lấy cảm hứng từ *Wolfenstein 3D*, được thực hiện như một đồ án cuối kỳ môn AI. Game mô phỏng môi trường FPS (first-person shooter) với kỹ thuật raycasting để render không gian 3D trên mặt phẳng 2D. Các NPC trong game sử dụng các thuật toán tìm kiếm (như A* hoặc Tìm kiếm bằng môi trường niềm tin, ...) để tìm và đuổi theo người chơi.
 
 ## Tính năng
 - **Raycasting 3D**: Kỹ thuật render không gian 3D cơ bản.
