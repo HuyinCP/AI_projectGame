@@ -10,7 +10,7 @@ This project is a 3D raycasting game inspired by *Wolfenstein 3D*, created as pa
 - **Mouse Control**: Allows the player to look around and navigate the world.
 
 ## Screenshot
-![Game Screenshot](sreenshots/0.jpg)
+![Game Screenshot](sreenshots.jpg)
 
 ## Group Members
 - **Nghiêm Quang Huy**: 23110222
