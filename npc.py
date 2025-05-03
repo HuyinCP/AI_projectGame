@@ -195,6 +195,26 @@ class NPC(AnimatedSprite):
         normalized_distance_cost=distance_cost/max_distance
         distance_penalty=0
 
+        if distance_current <=self.attack_dist: 
+            if state in ['attack']: 
+                distance_penalty=0.2
+            elif state in ['hide']: 
+                distance_penalty=1.0
+            elif state in ['escape']: 
+                distance_penalty=0.4
+            else: 
+                distance_penalty=0.8
+        else: 
+            if state in ['attack']: 
+                distance_penalty=0.8
+            elif state in ['hide']: 
+                distance_penalty=0.5
+            elif state in ['escape']: 
+                distance_penalty=0.2
+            else: 
+                distance_penalty=0.4
+
+
         # chi phi dua vao luong mau mat di 
         npc_health_lost= 1000 - self.health
         normalized_health__loss_cost=npc_health_lost/1000
@@ -205,30 +225,34 @@ class NPC(AnimatedSprite):
                 health_penalty=0
             else : 
                 health_penalty=0.8
-            distance_penalty = 0.2 if state in ['escape','hide'] else 0.5
+            # distance_penalty = 0.2 if state in ['escape','hide'] else 0.5
         elif self.health <300:
             if state in ['attack']: 
                 health_penalty=0
-                distance_penalty=0.3
+                # distance_penalty=0.3
             elif state  in ['escape']:
                 health_penalty=0.3
-                distance_penalty=0
+                # distance_penalty=0
             else : 
                 health_penalty=0.8
-                if state in ['movement']: 
-                    distance_penalty=0.1
-                else : 
-                    distance_penalty=0.5
+                # if state in ['movement']: 
+                #     distance_penalty=0.1
+                # else : 
+                #     distance_penalty=0.5
 
         see_player=0
 
         if self.ray_cast_player_npc(): 
-            if state in ['escape','hide']: 
+            if state in ['escape','hide','movement']: 
                 see_player=0
             else : 
-                see_player=0.5
+                see_player=0.4
+        else: 
+            if state in ['escape','hide']: 
+                see_player=0.2
+            else: 
+                see_player =1  
 
-            
 
         # Chi phi dua tren chuyen trang thai 
         state_cost = 0.0
@@ -363,11 +387,6 @@ class NPC(AnimatedSprite):
                     self.decay_search_belief_map()
                     self.tuan_tra()
 
-            # # Neu khong nhin thay player va khong co muc tieu, thuc hien di tuan
-            # if not self.player_search_trigger:
-            #     self.animate(self.walk_images)
-            #     self.decay_search_belief_map()
-            #     self.tuan_tra()
         else:
             self.animate_death()
 
@@ -851,11 +870,3 @@ class SoldierNPC(NPC):
 #         self.attack_damage = 15
 #         self.speed = 0.055
 #         self.accuracy = 0.25
-
-
-
-
-
-
-
-
