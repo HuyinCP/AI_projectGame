@@ -13,8 +13,8 @@ Dự án này là một game 3D raycasting được lấy cảm hứng từ *Wol
 ![Game Screenshot](sreenshots.png)
 
 ## Thành viên nhóm
-- **Nghiêm Quang Huy**: 23110222
-- **Nguyễn Hoàng Hà**: 23110207
+- **Nghiêm Quang Huy**: masv: 23110222
+- **Nguyễn Hoàng Hà**: masv: 23110207
 
 ## Yêu cầu
 Trước khi chạy game, bạn cần cài đặt các phần mềm sau:
