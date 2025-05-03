@@ -59,12 +59,10 @@ class Game:
         self.delta_time = self.clock.tick(FPS) 
         
         pg.display.set_caption(f'{self.clock.get_fps() :.1f}')
-        # pg.display.set_caption("AI Game")
     
     def draw(self):
         self.screen.fill('black')
         # self.object_renderer.draw()
-        # self.weapon.draw()
         # self.weapon.draw()
         self.map.draw() #vẽ map 2D
         self.player.draw() #vẽ chấm xanh người chơi
