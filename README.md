@@ -1,28 +1,28 @@
-# DOOM-style 3D Raycasting Game with AI NPCs
+# Game DOOM-style 3D Raycasting với AI NPC
 
-This project is a 3D raycasting game inspired by *Wolfenstein 3D*, created as part of an AI course final project. The game simulates a first-person shooter (FPS) environment with simple 3D rendering using raycasting. The AI NPCs in the game utilize search algorithms (like A* or Dijkstra) to locate and chase the player.
+Dự án này là một game 3D raycasting được lấy cảm hứng từ *Wolfenstein 3D*, được thực hiện như một đồ án cuối kỳ môn AI. Game mô phỏng môi trường FPS (first-person shooter) với kỹ thuật raycasting để render không gian 3D trên mặt phẳng 2D. Các NPC trong game sử dụng các thuật toán tìm kiếm (như A* hoặc Dijkstra) để tìm và đuổi theo người chơi.
 
-## Features
-- **3D Raycasting**: A basic 3D world rendering technique.
-- **AI NPCs**: NPCs use search algorithms to find the player.
-- **First-Person Shooter (FPS)**: Classic FPS controls.
-- **Maze-Like Levels**: The environment consists of maze-like levels where players must navigate.
-- **Mouse Control**: Allows the player to look around and navigate the world.
+## Tính năng
+- **Raycasting 3D**: Kỹ thuật render không gian 3D cơ bản.
+- **AI NPCs**: NPC sử dụng các thuật toán tìm kiếm để tìm và đuổi theo người chơi.
+- **FPS (First-Person Shooter)**: Điều khiển FPS cổ điển.
+- **Môi trường maze**: Các cấp độ trong game có dạng mê cung mà người chơi phải điều hướng qua.
+- **Điều khiển bằng chuột**: Cho phép người chơi nhìn xung quanh và điều hướng trong thế giới game.
 
-## Screenshot
-![Game Screenshot](sreenshots.jpg)
+## Ảnh chụp màn hình
+![Ảnh game](sreenshots.png)
 
-## Group Members
+## Thành viên nhóm
 - **Nghiêm Quang Huy**: 23110222
 - **Nguyễn Hoàng Hà**: 23110207
 
-## Requirements
-Before running the game, make sure you have the following installed:
+## Yêu cầu
+Trước khi chạy game, bạn cần cài đặt các phần mềm sau:
 
-- **Python 3.x**: You can download it from [here](https://www.python.org/downloads/).
-- **pygame**: A Python library used for writing video games.
+- **Python 3.x**: Bạn có thể tải Python từ [đây](https://www.python.org/downloads/).
+- **pygame**: Thư viện Python dùng để phát triển game.
 
-### Install Dependencies:
-To install the required dependencies, use `pip`:
+### Cài đặt thư viện phụ thuộc:
+Để cài đặt các thư viện cần thiết, sử dụng `pip`:
 ```bash
 pip install pygame
