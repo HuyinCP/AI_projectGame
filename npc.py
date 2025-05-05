@@ -92,7 +92,7 @@ class NPC(AnimatedSprite):
                             self.search_belief_map[x][y] +=5
                             # print("resset:",x,y)
             else:
-                fov_radius = 3
+                fov_radius = 2
                 for x in range(max(0, self.map_pos[0] - fov_radius), min(self.game.map.cols, self.map_pos[0] + fov_radius)):
                     for y in range(max(0, self.map_pos[1] - fov_radius), min(self.game.map.rows, self.map_pos[1] + fov_radius)):
                             # giam niem tin
@@ -112,15 +112,19 @@ class NPC(AnimatedSprite):
     def find_patroltarget_belief_map(self): 
         best_score=-float("inf")
         best_pos=None
-        candidate_pos=[]
+        max_belief = max(self.search_belief_map[x][y] 
+                 for x in range(self.game.map.cols) 
+                 for y in range(self.game.map.rows) 
+                 if (x, y) not in self.game.map.world_map)
+        max_distance = math.sqrt((self.game.map.rows**2 + self.game.map.cols**2))
         for x in range(self.game.map.cols):
             for y in range(self.game.map.rows):
                 if (x,y) in self.game.map.world_map:
                     continue
                 belief = self.search_belief_map[x][y]
-                dist=math.hypot(x - self.map_pos[0], y - self.map_pos[1])
+                dist=math.sqrt((x-self.map_pos[0])**2 + (y-self.map_pos[1])**2)
                 # Tính điểm: ưu tiên những điểm xa npc và có niềm tin cao
-                score= belief
+                score= belief/max_belief * 0.95 - dist/max_distance*0.05
                 # self.search_belief_map[x][y] = score
                 if score > best_score:
                     best_score = score
@@ -208,9 +212,9 @@ class NPC(AnimatedSprite):
             if state in ['attack']: 
                 distance_penalty=0.8
             elif state in ['hide']: 
-                distance_penalty=0.5
-            elif state in ['escape']: 
                 distance_penalty=0.2
+            elif state in ['escape']:
+                distance_penalty=0.3
             else: 
                 distance_penalty=0.4
 
@@ -223,6 +227,8 @@ class NPC(AnimatedSprite):
                 health_penalty=0.2
             elif state  in ['escape']:
                 health_penalty=0
+            elif state in ['hide']: 
+                health_penalty=0.3
             else : 
                 health_penalty=0.8
             # distance_penalty = 0.2 if state in ['escape','hide'] else 0.5
@@ -230,7 +236,7 @@ class NPC(AnimatedSprite):
             if state in ['attack']: 
                 health_penalty=0
                 # distance_penalty=0.3
-            elif state  in ['escape']:
+            elif state  in ['escape','hide']:
                 health_penalty=0.3
                 # distance_penalty=0
             else : 
@@ -264,11 +270,11 @@ class NPC(AnimatedSprite):
         elif goal_state == "escape":
             state_cost = 0.2 if state in ["attack", "hide"] else 0.5 if state == "movement" else 0.5
         elif goal_state == "hide":
-            state_cost = 0.2 if state == "escape" else 0.5 if state == "movement" else 0.8 if state == "attack" else 0.8
+            state_cost = 0.2 if state == "escape" else 0.5 if state == "movement" else 0.8 if state == "attack" else 0.2
 
-        w_distance = 0.2
-        w_health_loss = 0.4
-        w_see = 0.2 
+        w_distance = 0.25
+        w_health_loss = 0.3
+        w_see = 0.25
         w_state = 0.2
 
         total_cost = (
