@@ -42,7 +42,7 @@ class PathFinding:
             if cur_node == goal:
                 break
             next_nodes = graph[cur_node]
-
+            
             for next_node in next_nodes:
                 if next_node not in visited:
                     queue.append(next_node)

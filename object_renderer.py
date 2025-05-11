@@ -71,6 +71,7 @@ class ObjectRenderer:
         player_color = (0, 255, 0)  # Green for player
         npc_color = (255, 0, 0)  # Red for NPCs
         wall_color = (255, 255, 255)  # White for walls
+        health_color = (255, 255, 0)
 
         # Draw the mini-map background
         pg.draw.rect(self.game.screen, (0, 0, 0), (map_offset, map_offset, map_size, map_size))
@@ -80,6 +81,11 @@ class ObjectRenderer:
             rect = (map_offset + x * map_scale, map_offset + y * map_scale, map_scale, map_scale)
             pg.draw.rect(self.game.screen, wall_color, rect)
 
+                # Draw health points
+        for hp in self.game.map.health_points:
+            x, y = hp
+            rect = (map_offset + x * map_scale, map_offset + y * map_scale, map_scale, map_scale)
+            pg.draw.rect(self.game.screen, health_color, rect)
         # Draw NPCs
         for npc in self.game.object_handler.npc_list:
             if npc.alive:

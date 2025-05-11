@@ -1,7 +1,9 @@
 from sprite_object import *
-from random import randint, random
+from random import randint, random, choice 
 import math
 import heapq
+from collections import defaultdict
+import time
 
 class NPC(AnimatedSprite):
     def __init__(self, game, path='resources/sprites/npc/soldier/0.png', pos=(10.5, 5.5),
@@ -35,7 +37,18 @@ class NPC(AnimatedSprite):
         self.lost_player_timer = 0
         self.lost_player_timeout=600
         self.current_state="tuantra"
+        self.count=0
 
+                # Q-learning parameters
+        self.q_table = defaultdict(lambda: {a: 0 for a in ['up', 'down', 'left', 'right']})
+        self.alpha = 0.1  # Learning rate
+        self.gamma = 0.7  # Discount factor
+        self.epsilon = 0.1  # Exploration rate
+        self.known_health_points = set()  # Điểm hồi máu đã biết
+        self.health_points = [(8, 3)]  # Điểm hồi máu cố định
+        self.actions = ['up', 'down', 'left', 'right']
+        self.last_positions  = []
+        self.target_pos = None
 
     def update(self):
         self.check_animation_time()
@@ -47,12 +60,21 @@ class NPC(AnimatedSprite):
         return (x, y) not in self.game.map.world_map
 
     def check_wall_collision(self, dx, dy):
+        old_pos= self.map_pos
         if self.check_wall(int(self.x + dx * self.size), int(self.y)):
             self.x += dx
         if self.check_wall(int(self.x), int(self.y + dy * self.size)):
             self.y += dy
+        if self.map_pos in self.health_points:
+            # them vao nhan thuc cua npc
+            if self.map_pos not in self.known_health_points:
+                self.known_health_points.add(self.map_pos)
+        
 
     def movement(self):
+        old_pos = self.map_pos
+        valid_move = True
+        action = None
         # next_pos = self.game.pathfinding.get_path(self.map_pos, self.game.player.map_pos)
         next_pos=self.game.pathfinding.get_path_a_star(self.map_pos, self.game.player.map_pos)
         next_x, next_y = next_pos
@@ -63,6 +85,189 @@ class NPC(AnimatedSprite):
             dx = math.cos(angle) * self.speed
             dy = math.sin(angle) * self.speed
             self.check_wall_collision(dx, dy)
+            
+    def get_state(self,pos = None):
+        if pos is None:
+            pos = self.map_pos
+        x, y = pos
+        health_level = 0 if self.health < 300 else 1 if self.health < 700 else 2 # cap nhat muc do 
+        return (x, y, health_level)    
+
+    def check_health_point(self): 
+        if self.map_pos in self.health_points: 
+            # them vao nhan thuc cua npc
+            if self.map_pos not in self.known_health_points:
+                self.known_health_points.add(self.map_pos)
+                # print("tim duoc diem hoi mau:",self.map_pos)
+                return 200
+            self.health = 1000
+            return 200
+        return 0
+    
+    def upadate_last_positions(self,pos): 
+        self.last_positions.append(pos)
+        if len(self.last_positions) > 15:  # nhớ 10 bước gần nhất
+            self.last_positions.pop(0)
+
+    def mahattan_distance(self,pos): 
+        targets = self.known_health_points if self.known_health_points else None
+        if not targets:
+            return 1000
+        return min(abs(pos[0] - target[0]) + abs(pos[1] - target[1]) for target in targets)
+
+    def get_next_pos(self,pos,action): 
+        x,y= pos 
+        if action == 'up':
+            return (x - 1, y)
+        elif action == 'down':
+            return (x + 1, y)
+        elif action == 'left':
+            return (x, y - 1)
+        elif action == 'right':
+            return (x, y + 1)
+        return pos 
+    
+    def get_q_value(self, state, action):
+        if not self.check_wall(state[:2][0], state[:2][1]):
+            return 0
+        state_puple = state
+        next_pos = self.get_next_pos(state[:2], action)
+        if not self.check_wall(next_pos[0], next_pos[1]):
+            return float('-inf')
+        if state not in self.q_table:
+            self.q_table[state] = {a: 0 for a in ['up', 'down', 'left', 'right']}
+        # Always initialize with heuristic to ensure good starting point
+        if self.q_table[state][action] == 0:  # Reinitialize if low health
+            self.q_table[state][action] = -self.mahattan_distance(next_pos)
+        return self.q_table[state][action]
+
+    def get_valid_positions(self, state):
+        valid_moves = [a for a in ['up', 'down', 'left', 'right'] 
+               if self.check_wall(*self.get_next_pos(state[:2], a))]
+        return valid_moves
+
+
+    def chose_action(self, state):
+        if not self.check_wall(state[:2][0], state[:2][1]):
+            valid = self.get_valid_positions(state)
+            return choice(valid) if valid else choice(self.actions)
+        current_epsilon = max(0.01, self.epsilon * (0.995 ** self.count))
+        print(f"State: {state}, Epsilon: {current_epsilon}")
+        if random() < current_epsilon:
+            valid_moves = self.get_valid_positions(state)
+            heuristic_values = []
+            if valid_moves: 
+                    for a in valid_moves:
+                        next_pos = self.get_next_pos(state[:2], a)
+                        h = self.mahattan_distance(next_pos)
+                        heuristic_values.append(h)
+                    min_h = min(heuristic_values)
+                    best_moves = [valid_moves[i] for i, h in enumerate(heuristic_values) if h == min_h]
+                    print(f"Heuristic chosen: {best_moves}, Values: {heuristic_values}")
+                    if best_moves: 
+                        return choice(best_moves)
+            return choice(['up', 'down', 'left', 'right'])
+        q_values = [self.get_q_value(state, a) for a in ['up', 'down', 'left', 'right']]
+        print(f"Q-values: {q_values}")
+        valid_q_values = [q for q in q_values if q != float('-inf')]
+        max_q = max(valid_q_values)
+        max_actions = [a for a, q in zip(self.actions, q_values) if q == max_q]
+        print(f"Max actions: {max_actions}")
+        if not max_actions:
+            valid_moves = [a for a in self.actions if self.check_wall(*self.get_next_pos(state[:2], a))]
+            print(f"No valid Q-values, choosing random from: {valid_moves}")
+            return choice(valid_moves) if valid_moves else choice(self.actions)
+        return choice(max_actions)
+
+    def get_reward(self, old_pos, new_pos,valid_move, health_reward): 
+        # Tính toán phần thưởng dựa trên trạng thái cũ và mới
+        reward = 0
+        # Neu phat hien va cham tuong
+        if not valid_move: 
+            reward -= 50
+        if health_reward: 
+            reward += health_reward
+        if self.health < 600: 
+            reward -=20
+        if self.health < 300: 
+            reward -=20
+        reward -= 1
+        #         # Phần thưởng dựa trên search_belief_map (vị trí an toàn)
+        # old_belief = self.search_belief_map[old_pos[0]][old_pos[1]]
+        # new_belief = self.search_belief_map[new_pos[0]][new_pos[1]]
+        # if new_belief < old_belief and new_belief > 0 and old_belief > 0:
+        #     reward += 20  # Thưởng khi đến vị trí ít khả năng có người chơi
+        if self.known_health_points:
+            old_dist = self.mahattan_distance(old_pos)
+            new_dist = self.mahattan_distance(new_pos)
+            if new_dist < old_dist:
+                reward += 50 / (new_dist + 1)
+            else : 
+                reward -= 50 / (old_dist + 1)
+        if new_pos in self.last_positions:
+            idx = self.last_positions.index(new_pos)
+    # Hình phạt tăng lên cho các vị trí đã thăm gần đây hơn
+            recency_factor = (len(self.last_positions) - idx) / len(self.last_positions)
+            reward -= 30 * recency_factor
+        return reward
+    
+
+    def update_q_table(self, old_pos,new_pos, action, health_reward, valid_move):
+        self.count+=1
+        print(self.count)
+        state = self.get_state(old_pos)
+        reward = self.get_reward(old_pos, new_pos, valid_move, health_reward)
+        next_state = self.get_state(new_pos)
+        if state not in self.q_table:
+            self.q_table[state] = {a: 0 for a in self.actions}
+        if next_state not in self.q_table:
+            self.q_table[next_state] = {a: 0 for a in self.actions}
+        self.q_table[state][action] += self.alpha * (
+            reward + self.gamma * max(self.q_table[next_state].values()) - self.q_table[state][action]
+        )
+        self.upadate_last_positions(new_pos)
+        return reward
+
+    # def can_reach_goal(self, goal_pos):
+
+
+    def Q_learning_Run(self): 
+        state = self.get_state()
+        action = self.chose_action(state)
+        print("action:",action) 
+        old_pos = self.map_pos  
+        valid_move = True
+
+        if action == 'up':
+            next_pos = (self.map_pos[0] - 1, self.map_pos[1])
+        elif action == 'down':
+            next_pos = (self.map_pos[0] + 1, self.map_pos[1])
+        elif action == 'left':
+            next_pos = (self.map_pos[0], self.map_pos[1] - 1)
+        elif action == 'right':
+            next_pos = (self.map_pos[0], self.map_pos[1] + 1)
+        next_x, next_y = next_pos
+        print("next_pos:",next_pos)
+        print(" truoc di chuyen:",self.map_pos)
+        if self.check_wall(next_pos[0], next_pos[1]):
+            angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
+            dx = math.cos(angle) * self.speed
+            dy = math.sin(angle) * self.speed
+            self.check_wall_collision(dx, dy)
+            self.x,self.y = next_x, next_y
+            time.sleep(0.1)  # Thêm delay 0.5 giây để quan sát chuyển vị trí
+        if not self.check_wall(self.map_pos[0], self.map_pos[1]):
+                valid_move = False
+                # Kiểm tra điểm hồi máu
+        print(" sau di chuyen:",self.map_pos)
+        health_reward = self.check_health_point()
+                # Tính phần thưởng
+        reward = self.get_reward(old_pos, self.map_pos, valid_move, health_reward)
+                # Cập nhật Q-table
+        next_state = self.get_state()
+        if (self.known_health_points or health_reward) and action and old_pos != next_pos:
+            self.update_q_table(old_pos, self.map_pos, action, health_reward, valid_move)
+        self.epsilon = max(0.01, self.epsilon * 0.995)
 
     # Cap nhat belief map dua vao ket qua hanh dong
     def update_search_belief_map(self):
@@ -139,17 +344,20 @@ class NPC(AnimatedSprite):
     # Thuc hien di tuan dua vao niem tin da co
     def tuan_tra(self):
         best_pos = self.find_patroltarget_belief_map()
+        valid_move = True
+        action = None
         if best_pos:
+            old_pos = self.map_pos
             next_pos=self.game.pathfinding.get_path_a_star(self.map_pos, best_pos)
             next_x, next_y = next_pos
-            # print("tuan tra:",self.map_pos,best_pos,self.search_belief_map[next_x][next_y])
-            if next_pos :
-                    angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
-                    dx = math.cos(angle) * self.speed
-                    dy = math.sin(angle) * self.speed
-                    # print("di chuyen")
-                    self.check_wall_collision(dx, dy)
-                    # print('da di chuyen:',self.map_pos)
+            # print("di chuyen:",self.game.player.map_pos)
+            # pg.draw.rect(self.game.screen, 'blue', (100 * next_x, 100 * next_y, 100, 100))
+            if next_pos:
+                angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
+                dx = math.cos(angle) * self.speed
+                dy = math.sin(angle) * self.speed
+                self.check_wall_collision(dx, dy)
+               
 
     def attack(self):
         if self.animation_trigger:
@@ -183,10 +391,6 @@ class NPC(AnimatedSprite):
             self.alive = False
             self.game.sound.npc_death.play()
 
-
-    # trang thai muc tieu se la an minh
-    
-
     def heuristic_state(self,state,goal_state): 
         # chi phi khoang cach
         max_distance=math.sqrt(self.game.map.cols**2 + self.game.map.rows**2)
@@ -210,7 +414,7 @@ class NPC(AnimatedSprite):
                 distance_penalty=0.8
         else: 
             if state in ['attack']: 
-                distance_penalty=0.8
+                distance_penalty=0.3
             elif state in ['hide']: 
                 distance_penalty=0.2
             elif state in ['escape']:
@@ -249,15 +453,17 @@ class NPC(AnimatedSprite):
         see_player=0
 
         if self.ray_cast_player_npc(): 
-            if state in ['escape','hide','movement']: 
+            if state in ['escape','movement']: 
                 see_player=0
             else : 
                 see_player=0.4
         else: 
-            if state in ['escape','hide']: 
+            if state in ['escape']: 
                 see_player=0.2
+            elif state in ['hide']:
+                see_player=0.1
             else: 
-                see_player =1  
+                see_player =1
 
 
         # Chi phi dua tren chuyen trang thai 
@@ -297,7 +503,7 @@ class NPC(AnimatedSprite):
             ('attack', 'escape'): 0.2, ('attack', 'movement'): 0.5, ('attack', 'hide'): 0.8, ('attack','attack') : 0.2,
             ('escape', 'attack'): 0.2, ('escape', 'movement'): 0.8, ('escape', 'hide'): 0.2, ('escape','escape') : 0.2,
             ('movement', 'attack'): 0.2, ('movement', 'escape'): 0.5, ('movement', 'hide'): 0.8, ('movement','movement') : 0.2,
-            ('hide', 'attack'): 0.8, ('hide', 'escape'): 0.2, ('hide', 'movement'): 0.8, ('hide','hide') : 0.5
+            ('hide', 'attack'): 0.8, ('hide', 'escape'): 0.2, ('hide', 'movement'): 0.8, ('hide','hide') : 0.3
         }
         best_state=current_state
         best_cost=transition_costs.get((current_state,current_state),1.0) + self.heuristic_state(current_state,goal_state)
@@ -307,6 +513,7 @@ class NPC(AnimatedSprite):
                 best_cost=new_cost
                 best_state=next_state
         return best_state
+
 
     def run_logic(self):
         if self.alive:
@@ -340,8 +547,17 @@ class NPC(AnimatedSprite):
                         print("duoi theo")
                     elif next_current=='escape': 
                         self.animate(self.walk_images)
-                        self.bo_chay()
-                        print("bo chay")
+                        if len(self.known_health_points) > 0: 
+                            if self.target_pos is None:
+                                self.Q_learning_Run()
+                            else: 
+                                # self.move_towards_target()
+                                self.Q_learning_Run()
+
+                            print("chay theo Q")
+                        else : 
+                            self.bo_chay()
+                            print("bo chay")
                     elif next_current=='hide': 
                         print("an tron")
                 
@@ -381,8 +597,18 @@ class NPC(AnimatedSprite):
                         print("duoi theo")
                     elif next_current=='escape': 
                         self.animate(self.walk_images)
-                        self.bo_chay()
-                        print("bo chay")
+                        # self.bo_chay()
+                        if len(self.known_health_points) > 0: 
+                            if self.target_pos is None:
+                                self.Q_learning_Run()
+                            else: 
+                                # self.move_towards_target()
+                                self.Q_learning_Run()
+                            print("chay theo Q")
+                        else : 
+                            self.bo_chay()
+                            print("bo chay")
+                        
                     elif next_current=='hide': 
                         print("an tron")
                 
@@ -867,12 +1093,12 @@ class SoldierNPC(NPC):
 #         self.speed = 0.05
 #         self.accuracy = 0.35
 
-# class CyberDemonNPC(NPC):
-#     def __init__(self, game, path='resources/sprites/npc/cyber_demon/0.png', pos=(11.5, 6.0),
-#                  scale=1.0, shift=0.04, animation_time=210):
-#         super().__init__(game, path, pos, scale, shift, animation_time)
-#         self.attack_dist = 6
-#         self.health = 350
-#         self.attack_damage = 15
-#         self.speed = 0.055
-#         self.accuracy = 0.25
+class CyberDemonNPC(NPC):
+    def __init__(self, game, path='resources/sprites/npc/cyber_demon/0.png', pos=(11.5, 6.0),
+                 scale=1.0, shift=0.04, animation_time=210):
+        super().__init__(game, path, pos, scale, shift, animation_time)
+        self.attack_dist = 6
+        self.health = 350
+        self.attack_damage = 15
+        self.speed = 0.055
+        self.accuracy = 0.25
