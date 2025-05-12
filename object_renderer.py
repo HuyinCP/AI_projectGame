@@ -81,14 +81,16 @@ class ObjectRenderer:
             rect = (map_offset + x * map_scale, map_offset + y * map_scale, map_scale, map_scale)
             pg.draw.rect(self.game.screen, wall_color, rect)
 
-                # Draw health points
+        # Draw health points
         for hp in self.game.map.health_points:
             x, y = hp
             rect = (map_offset + x * map_scale, map_offset + y * map_scale, map_scale, map_scale)
             pg.draw.rect(self.game.screen, health_color, rect)
+
         # Draw NPCs
         for npc in self.game.object_handler.npc_list:
             if npc.alive:
+                # Draw NPC position
                 rect = (map_offset + npc.x * map_scale, map_offset + npc.y * map_scale, map_scale, map_scale)
                 pg.draw.rect(self.game.screen, npc_color, rect)
 
@@ -96,3 +98,12 @@ class ObjectRenderer:
         player_x, player_y = self.game.player.x, self.game.player.y
         player_rect = (map_offset + player_x * map_scale, map_offset + player_y * map_scale, map_scale, map_scale)
         pg.draw.rect(self.game.screen, player_color, player_rect)
+
+        # Draw player direction
+        player_dir_x = player_x + math.cos(self.game.player.angle) * 3
+        player_dir_y = player_y + math.sin(self.game.player.angle) * 3
+        start_pos = (map_offset + player_x * map_scale + map_scale // 2, 
+                    map_offset + player_y * map_scale + map_scale // 2)
+        end_pos = (map_offset + player_dir_x * map_scale + map_scale // 2, 
+                map_offset + player_dir_y * map_scale + map_scale // 2)
+        pg.draw.line(self.game.screen, player_color, start_pos, end_pos, 2)
