@@ -16,57 +16,64 @@ class NPC(AnimatedSprite):
         self.walk_images = self.get_images(self.path + '/walk')
 
         self.attack_dist = randint(3, 6)
-        self.speed = 0.03
-        self.size = 20
-        self.health = 1000
-        self.attack_damage = 10
-        self.accuracy = 0.15
-        self.alive = True
-        self.pain = False
-        self.ray_cast_value = False
-        self.frame_counter = 0
-        self.player_search_trigger = False
-        self.safe_distance = 5  # Khoảng cách an toàn tối thiểu (lưới)
-        self.target_pos = None
+        self.speed = 0.03 # tốc độ di chuyển của NPC
+        self.size = 20 # kích thước của NPC
+        self.health = 1000 # máu của NPC
+        self.attack_damage = 10 # sát thương mà NPC gây ra khi tấn công
+        self.accuracy = 0.15 # độ chính xác của NPC khi tấn công
+        self.alive = True # trạng thái sống/chết của NPC 
+        self.pain = False # kích hoạt animation pain
+        self.ray_cast_value = False # xác định liệu NPC có nhìn thấy người chơi hay không
+        self.frame_counter = 0 
+        self.player_search_trigger = False # xác định liệu NPC có dang tìm player hay không
+        self.safe_distance = 5  # khoản cách an toàn tối thiểu mà NPC cố gắng duy trì với người chơi
+        self.target_pos = None # vị trí mục tiêu mà NPC đang hướng đến
         self.theta = 0  # Góc nhìn của NPC (dùng trong ray_cast_player_npc)
-        self.path_update_timer = 0
-        self.state="run"
-        self.goal_Hide=None
-        self.path=[]
+        self.path_update_timer = 0 # xác định khi nào cần cập nhật đường đi của NPC
+        self.state = "run" # trạng thái hiện tại của NPC
+        self.goal_Hide = None # mục tiêu ẩn nấp của NPC, vị trí mà NPC muốn nấp 
+        self.path = [] # danh sách các điểm trên đường đi mà NPC cần di chuyển để đến mục tiêu
         self.search_belief_map = [[1 for _ in range(self.game.map.rows)] for _ in range(self.game.map.cols)]
-        self.lost_player_timer = 0
-        self.lost_player_timeout=600
-        self.current_state="tuantra"
-        self.count=0
+        self.lost_player_timer = 0 # bộ đếm thời gian kể từ khi NPC mất dấu người chơi
+        self.lost_player_timeout = 600 # thời gian tối đa mà NPC sẽ tiếp tục tìm kiếm người chơi sau khi mất dấu
+        self.current_state="tuantra" # trạng thái hành vi hiện tại của NPC 
+        self.count = 0 
 
-                # Q-learning parameters
+        # tham số cho Q-learning 
         self.q_table = defaultdict(lambda: {a: 0 for a in ['up', 'down', 'left', 'right']})
-        self.alpha = 0.1  # Learning rate
-        self.gamma = 0.7  # Discount factor
-        self.epsilon = 0.1  # Exploration rate
-        self.known_health_points = set()  # Điểm hồi máu đã biết
-        self.health_points = [(8, 3)]  # Điểm hồi máu cố định
-        self.actions = ['up', 'down', 'left', 'right']
-        self.last_positions  = []
-        self.target_pos = None
+        self.alpha = 0.1  # Learning rate: mức độ mà giá trị Q hiện tại được cập nhật bởi giá trị Q mới 
+        self.gamma = 0.7  # Discount factor: hệ số triết khấu, quyết định mức độ quan trọng của phần thưởng trong tương lai so với phần thưởng hiện tại
+        self.epsilon = 0.1  # Exploration rate: Tỷ lệ khám phá, xác suất để NPC chọn hành động ngẫu nhiên thay vì hành động tối ưu dựa trên Q table
+        self.known_health_points = set()  # điểm hồi máu đã biết
+        self.health_points = [(8, 3)]  # điểm hồi máu cố định
+        self.actions = ['up', 'down', 'left', 'right'] 
+        self.last_positions  = [] # danh sách những vị trí mà NPC đã đi qua trong quá khứ gần
 
     def update(self):
         self.check_animation_time()
         self.get_sprite()
         self.run_logic()
-        # self.draw_ray_cast()
+        self.draw_ray_cast()
 
     def check_wall(self, x, y):
+        """
+        kiểm tra (x, y) có phải là tường hay không,
+        không phải tường -> True, 
+        là tưởng -> False
+        """
         return (x, y) not in self.game.map.world_map
 
     def check_wall_collision(self, dx, dy):
-        old_pos= self.map_pos
-        if self.check_wall(int(self.x + dx * self.size), int(self.y)):
+        """xử lý va chạm của NPC với tường khi di chuyển"""
+        # kiểm tra vị trí mới theo trục x sau khi di chuyển theo dx có phải là tường hay không
+        if self.check_wall(int(self.x + dx * self.size), int(self.y)): 
             self.x += dx
+
+        # kiểm tra vị trí mới theo trục y sau khi di chuyển theo dy có phải là tường hay không
         if self.check_wall(int(self.x), int(self.y + dy * self.size)):
             self.y += dy
+        
         if self.map_pos in self.health_points:
-            # them vao nhan thuc cua npc
             if self.map_pos not in self.known_health_points:
                 self.known_health_points.add(self.map_pos)
         
@@ -76,9 +83,8 @@ class NPC(AnimatedSprite):
         valid_move = True
         action = None
         # next_pos = self.game.pathfinding.get_path(self.map_pos, self.game.player.map_pos)
-        next_pos=self.game.pathfinding.get_path_a_star(self.map_pos, self.game.player.map_pos)
+        next_pos = self.game.pathfinding.get_path_a_star(self.map_pos, self.game.player.map_pos)
         next_x, next_y = next_pos
-        # print("di chuyen:",self.game.player.map_pos)
         # pg.draw.rect(self.game.screen, 'blue', (100 * next_x, 100 * next_y, 100, 100))
         if next_pos:
             angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
@@ -86,37 +92,36 @@ class NPC(AnimatedSprite):
             dy = math.sin(angle) * self.speed
             self.check_wall_collision(dx, dy)
             
-    def get_state(self,pos = None):
+    def get_position_and_health_state (self,pos = None):
+        """trả vị trí và trạng thái sức khỏe của NPC"""
         if pos is None:
             pos = self.map_pos
         x, y = pos
-        health_level = 0 if self.health < 300 else 1 if self.health < 700 else 2 # cap nhat muc do 
+        health_level = 0 if self.health < 300 else 1 if self.health < 700 else 2 
         return (x, y, health_level)    
 
     def check_health_point(self): 
         if self.map_pos in self.health_points: 
-            # them vao nhan thuc cua npc
             if self.map_pos not in self.known_health_points:
                 self.known_health_points.add(self.map_pos)
-                # print("tim duoc diem hoi mau:",self.map_pos)
                 return 200
             self.health = 1000
             return 200
         return 0
     
     def upadate_last_positions(self,pos): 
+        """ghi lại 15 bước gần nhất của NPC"""
         self.last_positions.append(pos)
-        if len(self.last_positions) > 15:  # nhớ 10 bước gần nhất
+        if len(self.last_positions) > 15:
             self.last_positions.pop(0)
 
-    def mahattan_distance(self,pos): 
+    def mahattan_distance(self, pos): 
+        """khoản cách Mahattan từ pos đến các điểm hồi máu mà NPC đã biết"""
         targets = self.known_health_points if self.known_health_points else None
-        if not targets:
-            return 1000
         return min(abs(pos[0] - target[0]) + abs(pos[1] - target[1]) for target in targets)
 
-    def get_next_pos(self,pos,action): 
-        x,y= pos 
+    def get_next_pos(self, pos, action): 
+        x, y = pos 
         if action == 'up':
             return (x - 1, y)
         elif action == 'down':
@@ -128,33 +133,36 @@ class NPC(AnimatedSprite):
         return pos 
     
     def get_q_value(self, state, action):
-        if not self.check_wall(state[:2][0], state[:2][1]):
-            return 0
-        state_puple = state
+        """lấy Q(state, action) của trạng thái state và hành động action"""
+        if not self.check_wall(state[:2][0], state[:2][1]):  # lấy tọa độ (x, y) của trạng thái state                                     
+            return float('-inf')
+        
         next_pos = self.get_next_pos(state[:2], action)
         if not self.check_wall(next_pos[0], next_pos[1]):
             return float('-inf')
+        
         if state not in self.q_table:
             self.q_table[state] = {a: 0 for a in ['up', 'down', 'left', 'right']}
-        # Always initialize with heuristic to ensure good starting point
-        if self.q_table[state][action] == 0:  # Reinitialize if low health
+        
+        if self.q_table[state][action] == 0:
             self.q_table[state][action] = -self.mahattan_distance(next_pos)
         return self.q_table[state][action]
 
-    def get_valid_positions(self, state):
-        valid_moves = [a for a in ['up', 'down', 'left', 'right'] 
-               if self.check_wall(*self.get_next_pos(state[:2], a))]
+    def get_valid_moves(self, state):
+        """xác định các hành động hợp lệ mà NPC có thể thực hiện từ một trang thái cụ thể"""
+        valid_moves = [a for a in ['up', 'down', 'left', 'right'] if self.check_wall(*self.get_next_pos(state[:2], a))]
         return valid_moves
 
-
     def chose_action(self, state):
+        """bộ não của Q learning đưa ra các quyết định cho trạng thái state"""
         if not self.check_wall(state[:2][0], state[:2][1]):
-            valid = self.get_valid_positions(state)
+            valid = self.get_valid_moves(state)
             return choice(valid) if valid else choice(self.actions)
+        
         current_epsilon = max(0.01, self.epsilon * (0.995 ** self.count))
         print(f"State: {state}, Epsilon: {current_epsilon}")
         if random() < current_epsilon:
-            valid_moves = self.get_valid_positions(state)
+            valid_moves = self.get_valid_moves(state)
             heuristic_values = []
             if valid_moves: 
                     for a in valid_moves:
@@ -178,35 +186,24 @@ class NPC(AnimatedSprite):
             print(f"No valid Q-values, choosing random from: {valid_moves}")
             return choice(valid_moves) if valid_moves else choice(self.actions)
         return choice(max_actions)
-
-    def get_reward(self, old_pos, new_pos,valid_move, health_reward): 
+    
+    def get_reward(self, old_pos, new_pos, valid_move, health_reward): 
         # Tính toán phần thưởng dựa trên trạng thái cũ và mới
         reward = 0
-        # Neu phat hien va cham tuong
-        if not valid_move: 
+        if not valid_move:
             reward -= 50
         if health_reward: 
-            reward += health_reward
-        if self.health < 600: 
-            reward -=20
-        if self.health < 300: 
-            reward -=20
-        reward -= 1
-        #         # Phần thưởng dựa trên search_belief_map (vị trí an toàn)
-        # old_belief = self.search_belief_map[old_pos[0]][old_pos[1]]
-        # new_belief = self.search_belief_map[new_pos[0]][new_pos[1]]
-        # if new_belief < old_belief and new_belief > 0 and old_belief > 0:
-        #     reward += 20  # Thưởng khi đến vị trí ít khả năng có người chơi
+            reward += 100
         if self.known_health_points:
             old_dist = self.mahattan_distance(old_pos)
             new_dist = self.mahattan_distance(new_pos)
             if new_dist < old_dist:
                 reward += 50 / (new_dist + 1)
-            else : 
-                reward -= 50 / (old_dist + 1)
+            else:
+                reward -= 1
+
         if new_pos in self.last_positions:
             idx = self.last_positions.index(new_pos)
-    # Hình phạt tăng lên cho các vị trí đã thăm gần đây hơn
             recency_factor = (len(self.last_positions) - idx) / len(self.last_positions)
             reward -= 30 * recency_factor
         return reward
@@ -215,9 +212,9 @@ class NPC(AnimatedSprite):
     def update_q_table(self, old_pos,new_pos, action, health_reward, valid_move):
         self.count+=1
         print(self.count)
-        state = self.get_state(old_pos)
+        state = self.get_position_and_health_state (old_pos)
         reward = self.get_reward(old_pos, new_pos, valid_move, health_reward)
-        next_state = self.get_state(new_pos)
+        next_state = self.get_position_and_health_state (new_pos)
         if state not in self.q_table:
             self.q_table[state] = {a: 0 for a in self.actions}
         if next_state not in self.q_table:
@@ -228,14 +225,11 @@ class NPC(AnimatedSprite):
         self.upadate_last_positions(new_pos)
         return reward
 
-    # def can_reach_goal(self, goal_pos):
-
-
     def Q_learning_Run(self): 
-        state = self.get_state()
+        state = self.get_position_and_health_state()
         action = self.chose_action(state)
-        print("action:",action) 
-        old_pos = self.map_pos  
+
+        cur_pos = self.map_pos  
         valid_move = True
 
         if action == 'up':
@@ -247,8 +241,7 @@ class NPC(AnimatedSprite):
         elif action == 'right':
             next_pos = (self.map_pos[0], self.map_pos[1] + 1)
         next_x, next_y = next_pos
-        print("next_pos:",next_pos)
-        print(" truoc di chuyen:",self.map_pos)
+        
         if self.check_wall(next_pos[0], next_pos[1]):
             angle = math.atan2(next_y + 0.5 - self.y, next_x + 0.5 - self.x)
             dx = math.cos(angle) * self.speed
@@ -262,49 +255,49 @@ class NPC(AnimatedSprite):
         print(" sau di chuyen:",self.map_pos)
         health_reward = self.check_health_point()
                 # Tính phần thưởng
-        reward = self.get_reward(old_pos, self.map_pos, valid_move, health_reward)
+        reward = self.get_reward(cur_pos, self.map_pos, valid_move, health_reward)
                 # Cập nhật Q-table
-        next_state = self.get_state()
-        if (self.known_health_points or health_reward) and action and old_pos != next_pos:
-            self.update_q_table(old_pos, self.map_pos, action, health_reward, valid_move)
+        next_state = self.get_position_and_health_state ()
+        if (self.known_health_points or health_reward) and action and cur_pos != next_pos:
+            self.update_q_table(cur_pos, self.map_pos, action, health_reward, valid_move)
         self.epsilon = max(0.01, self.epsilon * 0.995)
 
     # Cap nhat belief map dua vao ket qua hanh dong
     def update_search_belief_map(self):
-            # Neu nhin thay dich
-            check_see=self.ray_cast_player_npc()
-            if check_see:
-                plyer_pos=self.game.player.map_pos
-                fov_radius = 4
-                for x in range(self.game.map.cols):
-                    for y in range(self.game.map.rows):
+        # Neu nhin thay dich
+        check_see=self.ray_cast_player_npc()
+        if check_see:
+            plyer_pos=self.game.player.map_pos
+            fov_radius = 4
+            for x in range(self.game.map.cols):
+                for y in range(self.game.map.rows):
+                    if (x,y) in self.game.map.world_map:
+                        continue
+                    self.search_belief_map[x][y] = 0
+
+            for x in range(max(0, plyer_pos[0] - 2*fov_radius), min(self.game.map.cols, plyer_pos[0] + 2*fov_radius)):
+                for y in range(max(0, plyer_pos[1] - 2*fov_radius), min(self.game.map.rows, plyer_pos[1] + 2*fov_radius)):
+                        # tanng niem tin sieu to
+                        if (x,y) in self.game.map.world_map:
+                            continue
+                        self.search_belief_map[x][y] +=5
+                        # print("resset:",x,y)
+            for x in range(max(0, plyer_pos[0] - fov_radius), min(self.game.map.cols, plyer_pos[0] + fov_radius)):
+                for y in range(max(0, plyer_pos[1] - fov_radius), min(self.game.map.rows, plyer_pos[1] + fov_radius)):
+                        # tanng niem tin sieu to
+                        if (x,y) in self.game.map.world_map:
+                            continue
+                        self.search_belief_map[x][y] +=5
+                        # print("resset:",x,y)
+        else:
+            fov_radius = 2
+            for x in range(max(0, self.map_pos[0] - fov_radius), min(self.game.map.cols, self.map_pos[0] + fov_radius)):
+                for y in range(max(0, self.map_pos[1] - fov_radius), min(self.game.map.rows, self.map_pos[1] + fov_radius)):
+                        # giam niem tin
                         if (x,y) in self.game.map.world_map:
                             continue
                         self.search_belief_map[x][y] = 0
-
-                for x in range(max(0, plyer_pos[0] - 2*fov_radius), min(self.game.map.cols, plyer_pos[0] + 2*fov_radius)):
-                    for y in range(max(0, plyer_pos[1] - 2*fov_radius), min(self.game.map.rows, plyer_pos[1] + 2*fov_radius)):
-                            # tanng niem tin sieu to
-                            if (x,y) in self.game.map.world_map:
-                                continue
-                            self.search_belief_map[x][y] +=5
-                            # print("resset:",x,y)
-                for x in range(max(0, plyer_pos[0] - fov_radius), min(self.game.map.cols, plyer_pos[0] + fov_radius)):
-                    for y in range(max(0, plyer_pos[1] - fov_radius), min(self.game.map.rows, plyer_pos[1] + fov_radius)):
-                            # tanng niem tin sieu to
-                            if (x,y) in self.game.map.world_map:
-                                continue
-                            self.search_belief_map[x][y] +=5
-                            # print("resset:",x,y)
-            else:
-                fov_radius = 2
-                for x in range(max(0, self.map_pos[0] - fov_radius), min(self.game.map.cols, self.map_pos[0] + fov_radius)):
-                    for y in range(max(0, self.map_pos[1] - fov_radius), min(self.game.map.rows, self.map_pos[1] + fov_radius)):
-                            # giam niem tin
-                            if (x,y) in self.game.map.world_map:
-                                continue
-                            self.search_belief_map[x][y] = 0
-                            # print("resset:",x,y)
+                        # print("resset:",x,y)
                             
 
     # sau moi hanh dong cap nhat lai niem tin
@@ -498,7 +491,7 @@ class NPC(AnimatedSprite):
             # Các trạng thái hành vi có thể có
         possible_states = ['attack', 'escape', 'movement', 'hide']
 
-            # Chi phí chuyển đổi giữa các trạng thái
+        # Chi phí chuyển đổi giữa các trạng thái
         transition_costs = {
             ('attack', 'escape'): 0.2, ('attack', 'movement'): 0.5, ('attack', 'hide'): 0.8, ('attack','attack') : 0.2,
             ('escape', 'attack'): 0.2, ('escape', 'movement'): 0.8, ('escape', 'hide'): 0.2, ('escape','escape') : 0.2,
@@ -516,8 +509,8 @@ class NPC(AnimatedSprite):
 
 
     def run_logic(self):
-        if self.alive:
-            self.ray_cast_value= self.ray_cast_player_npc()
+        if self.alive: # NPC còn sống
+            self.ray_cast_value = self.ray_cast_player_npc()  
             self.check_hit_in_npc()
             self.update_search_belief_map()
             if self.pain:
@@ -536,6 +529,7 @@ class NPC(AnimatedSprite):
                     if next_current=='attack': 
                         self.animate(self.attack_images)
                         if self.dist < self.attack_dist and self.ray_cast_player_npc():
+                            pass
                             self.attack()
                         else: 
                             # self.bo_chay()
@@ -564,7 +558,7 @@ class NPC(AnimatedSprite):
                 # Neu player o trong tam tan cong va mau du nhieu
                 elif self.dist < self.attack_dist:
                     self.animate(self.attack_images)
-                    self.attack()
+                    # self.attack()
                     self.current_state="attack"
                 
                 # Neu khoang cach khong du tam ban, thi di chuyen lai gan hon
@@ -586,6 +580,7 @@ class NPC(AnimatedSprite):
                     if next_current=='attack': 
                         self.animate(self.attack_images)
                         if self.dist < self.attack_dist and self.ray_cast_player_npc():
+                            pass
                             self.attack()
                         else: 
                             # self.bo_chay()
