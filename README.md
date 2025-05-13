@@ -1,21 +1,73 @@
 # 🎮 Đồ án môn Trí Tuệ Nhân Tạo: Trò chơi Bắn Súng 3D Raycasting với AI Tìm Đường cho NPC
 
-Đây là một game bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật là hệ thống **NPC thông minh**, có khả năng tự học và phản ứng linh hoạt nhờ ứng dụng các thuật toán **AI hiện đại**:
+Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là hệ thống **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán Trí tuệ nhân tạo hiện đại.
+Được dựa trên và phát triển của [tại đây](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) lại thuật toán cho NPC nhằm tối ưu hóa các thuật toán.
+---
 
-- 🌟 **A\***: Tìm đường ngắn nhất, tránh chướng ngại vật.
-- 🧠 **Belief Map**: Cho phép NPC dự đoán vị trí người chơi kể cả khi không còn nhìn thấy.
-- ⛰️ **Hill Climbing**: Đưa ra chiến lược hành động theo sự thay đổi niềm tin (belief).
-- 🤖 **Q-Learning**: Giúp NPC học hành vi tối ưu qua trải nghiệm.
+## 🧠 Các thuật toán AI & cách hoạt động
+
+### 🌟 A* (A-star Search) – Tìm đường hiệu quả
+- **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu (người chơi, điểm hồi máu...).
+- **Cách hoạt động**:
+  - Mỗi bước tìm kiếm dựa trên công thức `f(n) = g(n) + h(n)`
+    - `g(n)` là chi phí từ điểm bắt đầu đến ô hiện tại.
+    - `h(n)` là ước lượng khoảng cách từ ô hiện tại đến mục tiêu (heuristic, thường dùng khoảng cách Manhattan).
+  - Thuật toán mở rộng các ô có `f(n)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
+- **Ứng dụng trong game**: NPC dùng A* để di chuyển thông minh qua bản đồ mê cung, tránh vật cản và tiếp cận mục tiêu hiệu quả.
 
 ---
 
-## 🧠 Các tính năng nổi bật
+### 🧠 Belief Map – Bản đồ niềm tin
+- **Mục tiêu**: Giúp NPC tiếp tục truy vết người chơi ngay cả khi không còn nhìn thấy.
+- **Cách hoạt động**:
+  - Khi mất dấu người chơi, NPC lưu lại vị trí cuối cùng quan sát được.
+  - Sau đó cập nhật **"niềm tin"** về vị trí mới dựa vào chuyển động trước đó (vector hướng, tốc độ, v.v).
+  - NPC sẽ tìm đến các vị trí có khả năng cao người chơi xuất hiện (dựa trên belief).
+- **Ứng dụng**: Giúp hành vi của NPC trở nên **thực tế và không bị ngớ ngẩn khi người chơi trốn khỏi tầm nhìn**.
 
-- ✅ **Raycasting 3D**: Tái hiện không gian ba chiều bằng kỹ thuật raycasting trên mặt phẳng 2D.
-- ✅ **AI NPC thông minh**: Biết truy đuổi, chạy trốn, ẩn nấp theo lượng máu và tình huống chiến đấu.
-- ✅ **Q-Table học hỏi**: Giúp NPC ghi nhớ và cải thiện hành vi qua từng vòng chơi.
-- ✅ **Bản đồ mê cung**: Thử thách người chơi và khả năng học tập của NPC trong điều kiện không gian hẹp.
-- ✅ **Điều khiển FPS cổ điển**: Hỗ trợ điều hướng bằng bàn phím và chuột mượt mà.
+---
+
+### ⛰️ Hill Climbing – Leo đồi chiến lược
+- **Mục tiêu**: Giúp NPC ra quyết định chiến thuật như tấn công, rút lui, hoặc ẩn nấp.
+- **Cách hoạt động**:
+  - Với mỗi hành động khả thi (di chuyển, tấn công, chạy trốn...), NPC tính điểm lợi ích (heuristic).
+  - Hành động có lợi ích cao nhất được chọn (leo lên "đồi" giá trị).
+  - Nếu không còn lựa chọn tốt hơn → dừng tại điểm cực đại cục bộ.
+- **Ứng dụng**: Khi NPC còn ít máu, nó có thể chọn rút lui về chỗ hồi máu thay vì cố lao vào chiến đấu → hành vi **linh hoạt và hợp lý hơn**.
+
+---
+
+### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
+- **Mục tiêu**: Giúp NPC học cách phản ứng tối ưu trong nhiều tình huống khác nhau.
+- **Cách hoạt động**:
+  - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
+  - Công thức cập nhật:
+    ```python
+    Q(s, a) = Q(s, a) + α * [r + γ * max(Q(s', a')) - Q(s, a)]
+    ```
+    - `s`: trạng thái hiện tại
+    - `a`: hành động được chọn
+    - `r`: phần thưởng nhận được sau khi thực hiện hành động
+    - `s'`: trạng thái mới sau hành động
+    - `α`: tốc độ học
+    - `γ`: hệ số chiết khấu tương lai
+  - Trạng thái gồm: máu hiện tại, khoảng cách đến người chơi, vị trí hiện tại, v.v.
+- **Ứng dụng**:
+  - NPC dần học được hành vi như:
+    - Tìm chỗ hồi máu khi máu yếu
+    - Ưu tiên tấn công khi có lợi thế
+    - Né tránh khi thấy không an toàn
+  - NPC trở nên **càng thông minh sau mỗi lượt chơi**.
+
+---
+
+## 🔥 Tính năng nổi bật
+
+- ✅ **Raycasting 3D**: Hiển thị không gian 3D trong môi trường 2D.
+- ✅ **Hành vi NPC linh hoạt**: Biết truy đuổi, ẩn nấp, rút lui, tấn công có chiến lược.
+- ✅ **Học hỏi qua trải nghiệm**: NPC ngày càng thông minh nhờ Q-Learning.
+- ✅ **Thử thách mê cung**: Kiểm tra khả năng điều hướng và truy đuổi trong môi trường phức tạp.
+- ✅ **Giao diện FPS cổ điển**: Điều khiển bằng chuột và bàn phím như game FPS kinh điển.
 
 ---
 
@@ -28,17 +80,16 @@
 
 ---
 
-## 📦 Yêu cầu hệ thống
+## 🧰 Yêu cầu hệ thống
 
-- Python 3.x ([Tải tại đây](https://www.python.org/downloads/))
-- Thư viện `pygame` để xử lý đồ họa và sự kiện game.
+- Python 3.x  
+- Thư viện `pygame`
 
 ---
 
 ## 🚀 Hướng dẫn cài đặt & chạy game
 
-### 1. Tải mã nguồn dự án về
-
+### 1. Tải mã nguồn
 ```bash
 git clone https://github.com/HuyinCP/AI_projectGame.git
 cd AI_projectGame
