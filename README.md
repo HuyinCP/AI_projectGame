@@ -11,7 +11,7 @@
 
 ## 🧠 Các tính năng nổi bật
 
-- ✅ **Raycasting 3D**: Tái hiện không gian 3D bằng kỹ thuật cổ điển trên môi trường 2D.
+- ✅ **Raycasting 3D**: Tái hiện không gian 3D bằng kỹ thuật raycasting trên môi trường 2D.
 - ✅ **Hành vi NPC thông minh**: NPC có khả năng tự tìm đường, chạy trốn, truy đuổi hoặc ẩn nấp tùy theo lượng máu và tình huống.
 - ✅ **AI học hỏi**: Sử dụng bảng Q-Table để học và ghi nhớ hành vi hiệu quả.
 - ✅ **Môi trường mê cung**: Các bản đồ được thiết kế như mê cung giúp kiểm tra khả năng học tập của NPC.
@@ -33,7 +33,14 @@ Trước khi chạy game, bạn cần cài đặt:
 - [Python 3.x](https://www.python.org/downloads/)
 - `pygame` – thư viện đồ họa và game cho Python.
 
-### Cài đặt thư viện phụ thuộc
+### Tải dự án về:
+
+Mở terminal hoặc CMD và chạy:
+
+```bash
+git clone https://github.com/HuyinCP/AI_projectGame.git
+
+### Cài đặt thư viện pygame hỗ trợ giao diện
 
 Mở terminal hoặc CMD và chạy:
 
