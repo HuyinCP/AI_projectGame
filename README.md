@@ -38,12 +38,12 @@
 ---
 
 ### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
-- **Mục tiêu**: Giúp NPC học cách phản ứng tối ưu trong nhiều tình huống khác nhau.
+- **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
 - **Cách hoạt động**:
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
   - Công thức cập nhật:
     ```python
-    Q(s, a) = Q(s, a) + α * [r + γ * max(Q(s', a')) - Q(s, a)]
+    Q[s][a] = Q[s][a] + α * [r + γ * max(Q[s'][a']) - Q[s][a]]
     ```
     - `s`: trạng thái hiện tại
     - `a`: hành động được chọn
@@ -55,21 +55,21 @@
 - **Ứng dụng**:
   - NPC dần học được hành vi như:
     - Tìm chỗ hồi máu khi máu yếu
-    - Ưu tiên tấn công khi có lợi thếư
-  - NPC trở nên **càng thông minh sau mỗi lượt chơi**.
+    - Ưu tiên tấn công khi có lợi thế
+  - NPC trở nên **càng thông minh sau mỗi lần lượt tìm được vị trí hồi máu**.
 ---
 
 ## 🔥 Tính năng nổi bật
 
 - ✅ **Raycasting 3D**: Hiển thị không gian 3D trong môi trường 2D.
-- ✅ **Hành vi NPC linh hoạt**: Biết truy đuổi, ẩn nấp, rút lui, tấn công có chiến lược.
-- ✅ **Học hỏi qua trải nghiệm**: NPC ngày càng thông minh nhờ Q-Learning.
+- ✅ **Hành vi NPC linh hoạt**: Biết truy đuổi, rút lui, tấn công có chiến lược.
+- ✅ **Học hỏi qua trải nghiệm**: NPC ngày càng thông minh trong việc tìm vị trí hồi máu nhờ Q-Learning.
 - ✅ **Thử thách mê cung**: Kiểm tra khả năng điều hướng và truy đuổi trong môi trường phức tạp.
-- ✅ **Giao diện FPS cổ điển**: Điều khiển bằng chuột và bàn phím như game FPS kinh điển.
+- ✅ **Giao diện FPS**: Điều khiển bằng chuột và bàn phím như game 8x-9x.
 
 ---
 
-## 👨‍💻 Nhóm phát triển
+## 👨‍💻 Thành viên phát triển
 
 | Họ và tên        | Mã sinh viên  |
 |------------------|---------------|
