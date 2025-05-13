@@ -11,7 +11,7 @@
 - **Cách hoạt động**:
   - Mỗi bước tìm kiếm dựa trên công thức `f(n) = g(n) + h(n)`
     - `g(n)` là chi phí từ điểm bắt đầu đến ô hiện tại.
-    - `h(n)` là ước lượng khoảng cách từ ô hiện tại đến mục tiêu (heuristic, thường dùng khoảng cách Manhattan).
+    - `h(n)` là ước lượng khoảng cách từ ô hiện tại đến mục tiêu (heuristic, khoảng cách Manhattan).
   - Thuật toán mở rộng các ô có `f(n)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
 - **Ứng dụng trong game**: NPC dùng A* để di chuyển thông minh qua bản đồ mê cung, tránh vật cản và tiếp cận mục tiêu hiệu quả.
 
