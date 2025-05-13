@@ -1,6 +1,6 @@
-# 🎮 Trò chơi Bắn Súng 3D Raycasting với AI Tìm Đường cho NPC
+# 🎮 Đồ án môn Trí Tuệ nhân tạo : Trò chơi Bắn Súng 3D Raycasting với AI Tìm Đường cho NPC
 
-Dự án này là một game bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng môi trường 3D trên mặt phẳng 2D. Điểm nổi bật là hệ thống **NPC thông minh**, có khả năng tự học và phản ứng trước môi trường nhờ các thuật toán **AI hiện đại** như:
+Đồ án này là một game bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng môi trường 3D trên mặt phẳng 2D. Điểm nổi bật là hệ thống **NPC thông minh**, có khả năng tự học và phản ứng trước môi trường nhờ các thuật toán **AI hiện đại** như:
 
 - 🌟 **A\***: Tìm đường ngắn nhất tránh chướng ngại vật.
 - 🧠 **Belief Map**: Giúp NPC dự đoán vị trí của người chơi dù không nhìn thấy.
@@ -16,14 +16,6 @@ Dự án này là một game bắn súng góc nhìn thứ nhất (FPS) sử dụ
 - ✅ **AI học hỏi**: Sử dụng bảng Q-Table để học và ghi nhớ hành vi hiệu quả.
 - ✅ **Môi trường mê cung**: Các bản đồ được thiết kế như mê cung giúp kiểm tra khả năng học tập của NPC.
 - ✅ **Điều khiển FPS cổ điển**: Hỗ trợ điều hướng bằng bàn phím và chuột.
-
----
-
-## 📷 Screenshot
-
-![Game Screenshot](screenshots.png)
-
----
 
 ## 👨‍💻 Nhóm phát triển
 
