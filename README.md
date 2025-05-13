@@ -1,4 +1,4 @@
-# Đồ án môn Trí Tuệ Nhân Tạo: XÂY DỰNG GAME BẮN SÚNG 3D VÀ ỨNG DỤNG CÁC THUẬT TOÁN TÌM KIẾM CHO NPC
+# XÂY DỰNG GAME BẮN SÚNG 3D VÀ ỨNG DỤNG CÁC THUẬT TOÁN TÌM KIẾM CHO NPC
 Được dựa trên [tại đây](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển lại thuật toán cho NPC nhằm tối ưu hóa các thuật toán.
 Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là hệ thống **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán Trí tuệ nhân tạo hiện đại.
 
