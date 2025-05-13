@@ -7,7 +7,7 @@
 ## 🧠 Các thuật toán AI & cách hoạt động
 
 ### 🌟 A* (A-star Search) – Tìm đường hiệu quả
-- **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu (người chơi).
+- **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu.
 - **Cách hoạt động**:
   - Mỗi bước tìm kiếm dựa trên công thức `f(n) = g(n) + h(n)`
     - `g(n)` là chi phí từ điểm bắt đầu đến ô hiện tại.
