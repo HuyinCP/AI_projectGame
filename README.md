@@ -55,10 +55,8 @@
 - **Ứng dụng**:
   - NPC dần học được hành vi như:
     - Tìm chỗ hồi máu khi máu yếu
-    - Ưu tiên tấn công khi có lợi thế
-    - Né tránh khi thấy không an toàn
+    - Ưu tiên tấn công khi có lợi thếư
   - NPC trở nên **càng thông minh sau mỗi lượt chơi**.
-
 ---
 
 ## 🔥 Tính năng nổi bật
