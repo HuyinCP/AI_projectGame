@@ -9,7 +9,10 @@
 ### 🌟 A* (A-star Search) – Tìm đường hiệu quả
 - **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu.
 - **Cách hoạt động**:
-  - Mỗi bước tìm kiếm dựa trên công thức ```python f(n) = g(n) + h(n)```
+  - Mỗi bước tìm kiếm dựa trên công thức
+    ```python
+    f(n) = g(n) + h(n)
+    ```
     - `g(n)` là chi phí từ điểm bắt đầu đến ô hiện tại.
     - `h(n)` là ước lượng khoảng cách từ ô hiện tại đến mục tiêu (heuristic, khoảng cách Manhattan).
   - Thuật toán mở rộng các ô có `f(n)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
