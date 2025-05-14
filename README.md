@@ -93,4 +93,8 @@
 ### 1. Tải mã nguồn
 ```bash
 git clone https://github.com/HuyinCP/AI_projectGame.git
-cd AI_projectGame
+```
+#### Vào folder đã clone và chạy file main.py
+```bash
+python main.py
+
