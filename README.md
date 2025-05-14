@@ -4,7 +4,7 @@
 
 ---
 
-## 🧠 Các thuật toán AI & cách hoạt động
+## 🧠 Các thuật toán tìm kiếm & cách hoạt động
 
 ### 🌟 A* (A-star Search) – Tìm đường hiệu quả
 - **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu.
@@ -65,9 +65,9 @@
 ## 🔥 Tính năng nổi bật
 
 - ✅ **Raycasting 3D**: Hiển thị không gian 3D trong môi trường 2D.
-- ✅ **Hành vi NPC linh hoạt**: Biết truy đuổi, rút lui, tấn công có chiến lược.
-- ✅ **Học hỏi qua trải nghiệm**: NPC ngày càng thông minh trong việc tìm vị trí hồi máu nhờ Q-Learning.
-- ✅ **Thử thách mê cung**: Kiểm tra khả năng điều hướng và truy đuổi trong môi trường phức tạp.
+- ✅ **Hành vi NPC linh hoạt**: Biết truy đuổi, rút lui, tấn công có chiến lược. (tính năng mới so với bản cũ)
+- ✅ **Học hỏi qua trải nghiệm**: NPC ngày càng thông minh trong việc tìm vị trí hồi máu nhờ Q-Learning. (tính năng mới so với bản cũ)
+- ✅ **Thử thách mê cung**: Kiểm tra khả năng điều hướng và truy đuổi trong môi trường phức tạp. (tính năng mới so với bản cũ)
 - ✅ **Giao diện FPS**: Điều khiển bằng chuột và bàn phím như game 8x-9x.
 
 ---
