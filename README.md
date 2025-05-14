@@ -66,13 +66,20 @@
     - Ưu tiên tấn công khi có lợi thế
   - NPC trở nên **càng thông minh sau mỗi lần lượt tìm được vị trí hồi máu**.
 ---
-#### 🎲 Chiến lược ε-greedy – Khám phá và khai thác
+#### 🎲 Chiến lược ε-greedy – Khám phá và khai thác của Q-Learning
 
 Để cân bằng giữa việc **khám phá hành vi mới** và **khai thác hành vi đã học**, NPC sử dụng chiến lược **epsilon-greedy (ε-greedy)**:
 
 - Với xác suất `ε`: chọn **hành động ngẫu nhiên** → khám phá hành vi mới.
 - Với xác suất `1 - ε`: chọn **hành động tốt nhất** từ bảng Q → khai thác kinh nghiệm cũ.
+- Càng về sau, xác suất khám phá (`ε`) sẽ **giảm dần**, điều này giúp NPC **ưu tiên khai thác các hành động đã học** thay vì liên tục thử hành động ngẫu nhiên.
 
+> Lý do: Ban đầu, NPC cần khám phá nhiều hành động khác nhau để hiểu môi trường. Nhưng khi đã có đủ dữ liệu và kinh nghiệm, việc khai thác (chọn hành động tốt nhất đã học) sẽ giúp NPC tối ưu hiệu quả hơn.
+
+- Thường sử dụng công thức giảm dần `ε` theo mỗi vòng lặp (episode):
+  
+```python
+epsilon = max(epsilon_min, epsilon * decay_rate)
 Ví dụ triển khai bằng Python:
 
 ```python
