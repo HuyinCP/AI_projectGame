@@ -160,7 +160,7 @@ class NPC(AnimatedSprite):
             return choice(valid) if valid else choice(self.actions)
         
         current_epsilon = max(0.01, self.epsilon * (0.995 ** self.count))
-        print(f"State: {state}, Epsilon: {current_epsilon}")
+        # print(f"State: {state}, Epsilon: {current_epsilon}")
         if random() < current_epsilon:
             valid_moves = self.get_valid_moves(state)
             heuristic_values = []
@@ -171,19 +171,19 @@ class NPC(AnimatedSprite):
                         heuristic_values.append(h)
                     min_h = min(heuristic_values)
                     best_moves = [valid_moves[i] for i, h in enumerate(heuristic_values) if h == min_h]
-                    print(f"Heuristic chosen: {best_moves}, Values: {heuristic_values}")
+                    # print(f"Heuristic chosen: {best_moves}, Values: {heuristic_values}")
                     if best_moves: 
                         return choice(best_moves)
             return choice(['up', 'down', 'left', 'right'])
         q_values = [self.get_q_value(state, a) for a in ['up', 'down', 'left', 'right']]
-        print(f"Q-values: {q_values}")
+        # print(f"Q-values: {q_values}")
         valid_q_values = [q for q in q_values if q != float('-inf')]
         max_q = max(valid_q_values)
         max_actions = [a for a, q in zip(self.actions, q_values) if q == max_q]
-        print(f"Max actions: {max_actions}")
+        # print(f"Max actions: {max_actions}")
         if not max_actions:
             valid_moves = [a for a in self.actions if self.check_wall(*self.get_next_pos(state[:2], a))]
-            print(f"No valid Q-values, choosing random from: {valid_moves}")
+            # print(f"No valid Q-values, choosing random from: {valid_moves}")
             return choice(valid_moves) if valid_moves else choice(self.actions)
         return choice(max_actions)
     
@@ -201,9 +201,9 @@ class NPC(AnimatedSprite):
                 reward += 50 / (new_dist + 1)
             else:
                 reward -= 1
-
-        if new_pos in self.last_positions:
-            idx = self.last_positions.index(new_pos)
+        
+        if new_pos in self.last_positions and self.mahattan_distance(new_pos) > 4:
+            idx = self.last_positions.index(new_pos)            
             recency_factor = (len(self.last_positions) - idx) / len(self.last_positions)
             reward -= 30 * recency_factor
         return reward
@@ -211,7 +211,6 @@ class NPC(AnimatedSprite):
 
     def update_q_table(self, old_pos,new_pos, action, health_reward, valid_move):
         self.count+=1
-        print(self.count)
         state = self.get_position_and_health_state (old_pos)
         reward = self.get_reward(old_pos, new_pos, valid_move, health_reward)
         next_state = self.get_position_and_health_state (new_pos)
@@ -252,7 +251,7 @@ class NPC(AnimatedSprite):
         if not self.check_wall(self.map_pos[0], self.map_pos[1]):
                 valid_move = False
                 # Kiểm tra điểm hồi máu
-        print(" sau di chuyen:",self.map_pos)
+        # print(" sau di chuyen:",self.map_pos)
         health_reward = self.check_health_point()
                 # Tính phần thưởng
         reward = self.get_reward(cur_pos, self.map_pos, valid_move, health_reward)
@@ -302,9 +301,9 @@ class NPC(AnimatedSprite):
 
     # sau moi hanh dong cap nhat lai niem tin
     def decay_search_belief_map(self): 
-            for x in range(self.game.map.cols):
-                for y in range(self.game.map.rows):
-                        self.search_belief_map[x][y] = self.search_belief_map[x][y] + 0.01
+        for x in range(self.game.map.cols):
+            for y in range(self.game.map.rows):
+                    self.search_belief_map[x][y] = self.search_belief_map[x][y] + 0.01
 
     # tim vi tri co niem tin xuat hien dich cao nhat 
     def find_patroltarget_belief_map(self): 
@@ -419,7 +418,7 @@ class NPC(AnimatedSprite):
         # chi phi dua vao luong mau mat di 
         npc_health_lost= 1000 - self.health
         normalized_health__loss_cost=npc_health_lost/1000
-        if self.health <600 and self.health >=300: 
+        if self.health <600 and self.health >= 300: 
             if state in ['attack']: 
                 health_penalty=0.2
             elif state  in ['escape']:
@@ -487,8 +486,7 @@ class NPC(AnimatedSprite):
 
 
     def leo_doi(self,current_state,goal_state='hide'): 
-        print(current_state)
-            # Các trạng thái hành vi có thể có
+        """Trả về trạng thái tốt nhất tiếp theo"""
         possible_states = ['attack', 'escape', 'movement', 'hide']
 
         # Chi phí chuyển đổi giữa các trạng thái
@@ -499,7 +497,9 @@ class NPC(AnimatedSprite):
             ('hide', 'attack'): 0.8, ('hide', 'escape'): 0.2, ('hide', 'movement'): 0.8, ('hide','hide') : 0.3
         }
         best_state=current_state
+        
         best_cost=transition_costs.get((current_state,current_state),1.0) + self.heuristic_state(current_state,goal_state)
+        
         for next_state in possible_states: 
             new_cost=transition_costs.get((current_state,next_state),1.0) + self.heuristic_state(next_state,goal_state)
             if new_cost < best_cost: 
@@ -529,7 +529,6 @@ class NPC(AnimatedSprite):
                     if next_current=='attack': 
                         self.animate(self.attack_images)
                         if self.dist < self.attack_dist and self.ray_cast_player_npc():
-                            pass
                             self.attack()
                         else: 
                             # self.bo_chay()
@@ -558,7 +557,7 @@ class NPC(AnimatedSprite):
                 # Neu player o trong tam tan cong va mau du nhieu
                 elif self.dist < self.attack_dist:
                     self.animate(self.attack_images)
-                    # self.attack()
+                    self.attack()
                     self.current_state="attack"
                 
                 # Neu khoang cach khong du tam ban, thi di chuyen lai gan hon
@@ -580,7 +579,6 @@ class NPC(AnimatedSprite):
                     if next_current=='attack': 
                         self.animate(self.attack_images)
                         if self.dist < self.attack_dist and self.ray_cast_player_npc():
-                            pass
                             self.attack()
                         else: 
                             # self.bo_chay()
