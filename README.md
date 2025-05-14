@@ -66,7 +66,22 @@
     - Ưu tiên tấn công khi có lợi thế
   - NPC trở nên **càng thông minh sau mỗi lần lượt tìm được vị trí hồi máu**.
 ---
+#### 🎲 Chiến lược ε-greedy – Khám phá và khai thác
 
+Để cân bằng giữa việc **khám phá hành vi mới** và **khai thác hành vi đã học**, NPC sử dụng chiến lược **epsilon-greedy (ε-greedy)**:
+
+- Với xác suất `ε`: chọn **hành động ngẫu nhiên** → khám phá hành vi mới.
+- Với xác suất `1 - ε`: chọn **hành động tốt nhất** từ bảng Q → khai thác kinh nghiệm cũ.
+
+Ví dụ triển khai bằng Python:
+
+```python
+import random
+if random.uniform(0, 1) < epsilon:
+    action = random.choice(possible_actions)  # Khám phá
+else:
+    action = max(Q[state], key=Q[state].get)  # Khai thác
+```
 ## 🔥 Tính năng nổi bật
 
 - ✅ **Raycasting 3D**: Hiển thị không gian 3D trong môi trường 2D.
