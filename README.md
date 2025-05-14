@@ -1,6 +1,6 @@
 # XÂY DỰNG GAME BẮN SÚNG 3D VÀ ỨNG DỤNG CÁC THUẬT TOÁN TÌM KIẾM CHO NPC
 
-- **University**: HCMC University of Technology and Education
+- HCMC University of Technology and Education
 - **Giảng viên hướng dẫn**: TS. Phan Thị Huyền Trang
 
 Được dựa trên [đây](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển và xây dựng lại thuật toán cho NPC nhằm tối ưu các hành vi mà NPC thực hiện.
