@@ -1,5 +1,5 @@
 # XÂY DỰNG GAME BẮN SÚNG 3D VÀ ỨNG DỤNG CÁC THUẬT TOÁN TÌM KIẾM CHO NPC
-Được dựa trên [tại đây](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển lại thuật toán cho NPC nhằm tối ưu hóa các thuật toán.
+Được dựa trên [đây](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển và xây dựng lại thuật toán cho NPC nhằm tối ưu các hành vi mà NPC thực hiện.
 Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là hệ thống **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán Trí tuệ nhân tạo hiện đại.
 
 ---
@@ -9,7 +9,7 @@
 ### 🌟 A* (A-star Search) – Tìm đường hiệu quả
 - **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu.
 - **Cách hoạt động**:
-  - Mỗi bước tìm kiếm dựa trên công thức `f(n) = g(n) + h(n)`
+  - Mỗi bước tìm kiếm dựa trên công thức ```python f(n) = g(n) + h(n)```
     - `g(n)` là chi phí từ điểm bắt đầu đến ô hiện tại.
     - `h(n)` là ước lượng khoảng cách từ ô hiện tại đến mục tiêu (heuristic, khoảng cách Manhattan).
   - Thuật toán mở rộng các ô có `f(n)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
