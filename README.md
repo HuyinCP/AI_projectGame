@@ -51,12 +51,12 @@
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
   - Công thức cập nhật:
     ```python
-    Q[s][a] = Q[s][a] + α * [r + γ * max(Q[s'][a']) - Q[s][a]]
+    Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
     ```
-    - `s`: trạng thái hiện tại
-    - `a`: hành động được chọn
+    - `state`: trạng thái hiện tại
+    - `action`: hành động được chọn
     - `r`: phần thưởng nhận được sau khi thực hiện hành động
-    - `s'`: trạng thái mới sau hành động
+    - `state'`: trạng thái mới sau hành động
     - `α`: tốc độ học
     - `γ`: hệ số chiết khấu tương lai
   - Trạng thái gồm: máu hiện tại, khoảng cách đến người chơi, vị trí hiện tại, v.v.
