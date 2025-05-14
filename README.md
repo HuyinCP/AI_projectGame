@@ -80,8 +80,7 @@
   
 ```python
 epsilon = max(epsilon_min, epsilon * decay_rate)
-Ví dụ triển khai bằng Python:
-
+```
 ```python
 import random
 if random.uniform(0, 1) < epsilon:
