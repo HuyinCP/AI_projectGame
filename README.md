@@ -11,12 +11,12 @@
 - **Cách hoạt động**:
   - Mỗi bước tìm kiếm dựa trên công thức
     ```python
-    f(n) = g(n) + h(n)
+    f(current_state) = g(current_state) + h(current_state)
     ```
-    - `g(n)` là chi phí từ điểm bắt đầu đến ô hiện tại.
-    - `h(n)` là ước lượng khoảng cách từ ô hiện tại đến mục tiêu (heuristic, khoảng cách Manhattan).
-  - Thuật toán mở rộng các ô có `f(n)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
-- **Ứng dụng trong game**: NPC dùng A* để di chuyển thông minh qua bản đồ mê cung, tránh vật cản và tiếp cận mục tiêu hiệu quả.
+    - `g(current_state)` là chi phí từ điểm bắt đầu đến vị trí hiện tại.
+    - `h(current_state)` là ước lượng khoảng cách từ vị trí hiện tại đến mục vị trí mục tiêu.
+  - Thuật toán tham lam bằng mở rộng các ô có `f(current_state)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
+- **Ứng dụng trong game**: NPC dùng A* để di chuyển thông minh qua bản đồ mê cung, tránh vật cản và đi đến mục tiêu hiệu quả.
 
 ---
 
@@ -24,14 +24,14 @@
 - **Mục tiêu**: Giúp NPC tiếp tục truy vết người chơi ngay cả khi không còn nhìn thấy.
 - **Cách hoạt động**:
   - Khi mất dấu người chơi, NPC lưu lại vị trí cuối cùng quan sát được.
-  - Sau đó cập nhật **"niềm tin"** về vị trí mới dựa vào chuyển động trước đó (vector hướng, tốc độ, v.v).
+  - Sau đó cập nhật **"niềm tin"** về vị trí mới dựa vào chuyển động trước đó.
   - NPC sẽ tìm đến các vị trí có khả năng cao người chơi xuất hiện (dựa trên belief).
 - **Ứng dụng**: Giúp hành vi của NPC trở nên **thực tế và không bị ngớ ngẩn khi người chơi trốn khỏi tầm nhìn**.
 
 ---
 
 ### ⛰️ Hill Climbing – Leo đồi chiến lược
-- **Mục tiêu**: Giúp NPC ra quyết định chiến thuật như tấn công, rút lui, hoặc ẩn nấp.
+- **Mục tiêu**: Giúp NPC ra quyết định hành vi chiến thuật như tấn công, rút lui, đi tuần.
 - **Cách hoạt động**:
   - Với mỗi hành động khả thi (di chuyển, tấn công, chạy trốn...), NPC tính điểm lợi ích (heuristic).
   - Hành động có lợi ích cao nhất được chọn (leo lên "đồi" giá trị).
