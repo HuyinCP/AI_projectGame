@@ -52,6 +52,7 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 - **Cách hoạt động**:
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
   - Công thức cập nhật:
+    
 $$
 \forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
 Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
