@@ -47,19 +47,11 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 
 ---
 
-# 🤖 Q-Learning NPC Behavior
-
-Dự án mô phỏng cách một NPC học cách tự hành động thông minh như **tìm chỗ hồi máu khi máu yếu**, **tấn công khi có lợi thế**, v.v. bằng thuật toán **Q-Learning**.
-
-## 📌 Mục tiêu
-Xây dựng một agent (NPC) có thể tự học hành vi thông qua trải nghiệm tương tác với môi trường.
-
-## 🧠 Q-Learning là gì?
-
-Q-Learning là một thuật toán học tăng cường (Reinforcement Learning) giúp agent học cách hành động tốt nhất trong từng trạng thái.
-
-### 🔁 Cập nhật Q-Table:
-Công thức cập nhật Q-Value:
+### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
+- **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
+- **Cách hoạt động**:
+  - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
+  - Công thức cập nhật:
 
 $$
 Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a'} Q(s', a') - Q(s, a) \right]
