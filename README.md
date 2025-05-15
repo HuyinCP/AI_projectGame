@@ -51,7 +51,7 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 - **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
 - **Cách hoạt động**:
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
-  - Công thức cập nhật:
+  - Công thức quy hoạch động để cập nhật:
     ```python
     Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
     ```
