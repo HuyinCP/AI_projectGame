@@ -8,6 +8,7 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán tìm kiếm trong môn Trí Tuệ Nhân Tạo.
 
 ![Alt text](screenshot1.gif)
+![Alt text](screenshot2.gif)
 ---
 
 ## 🧠 Các thuật toán tìm kiếm & cách hoạt động
