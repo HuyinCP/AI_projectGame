@@ -4,10 +4,10 @@
 - **Môn**: Trí Tuệ Nhân Tạo
 - **Giảng viên hướng dẫn**: TS. Phan Thị Huyền Trang
 
-Được dựa trên [đây](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển và xây dựng lại thuật toán cho NPC nhằm tối ưu các hành vi mà NPC thực hiện.
+Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển và xây dựng thuật toán cho NPC nhằm tối ưu các hành vi mà NPC thực hiện.
 Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán tìm kiếm trong môn Trí Tuệ Nhân Tạo.
-![Uploading screendemo.gif…]()
 
+![Alt text](screendemo.gif)
 ---
 
 ## 🧠 Các thuật toán tìm kiếm & cách hoạt động
