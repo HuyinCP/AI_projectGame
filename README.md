@@ -46,14 +46,21 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 - **Ứng dụng**: Khi NPC còn ít máu, nó có thể chọn rút lui về chỗ hồi máu thay vì cố lao vào chiến đấu → hành vi **linh hoạt và hợp lý hơn**.
 
 ---
+**Công thức tổng quát:** (với mọi trạng thái và hành động có thể thực hiện)
 
+$$
+\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
+Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
+$$
 ### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
 - **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
 - **Cách hoạt động**:
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
-  - Công thức quy hoạch động để cập nhật:
+  - Trạng thái state: tọa độ (x, y)
+  - Hành động action: [bước trái, bước phải, bước lên, bước xuống]  
+  - Công thức :
     ```python
-    Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
+    Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]] (với mỗi state  và mọi action có thể thực hiện)
     ```
     - `state`: trạng thái hiện tại
     - `action`: hành động được chọn
