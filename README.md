@@ -59,6 +59,11 @@ $$
   - Trạng thái state: tọa độ (x, y)
   - Hành động action: [bước trái, bước phải, bước lên, bước xuống]  
   - Công thức :
+    **Công thức tổng quát:** (với mọi trạng thái và hành động có thể thực hiện)
+    $$
+    \forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
+    Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
+    $$
     ```python
     Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]] (với mỗi state  và mọi action có thể thực hiện)
     ```
