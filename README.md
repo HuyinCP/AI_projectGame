@@ -52,6 +52,10 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 - **Cách hoạt động**:
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
   - Công thức cập nhật:
+$$
+\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
+Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
+$$
     ```python
     Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
     ```
@@ -62,14 +66,8 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
     - `α`: tốc độ học
     - `γ`: hệ số chiết khấu tương lai
   - Trạng thái gồm: máu hiện tại, khoảng cách đến người chơi, vị trí hiện tại, v.v.
-**🧮 Công thức tổng quát:** (với mọi trạng thái và hành động có thể thực hiện)
 
-> Phiên bản toán học:
 
-$$
-\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
-Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
-$$
 - **Ứng dụng**:
   - NPC dần học được hành vi như:
     - Tìm chỗ hồi máu khi máu yếu
