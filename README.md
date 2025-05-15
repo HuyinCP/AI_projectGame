@@ -54,7 +54,8 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
   - Công thức cập nhật:
 
 $$
-Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a'} Q(s', a') - Q(s, a) \right]
+\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
+Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
 $$
 
 - `s`: trạng thái hiện tại  
