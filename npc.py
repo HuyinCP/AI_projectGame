@@ -383,10 +383,10 @@ class NPC(AnimatedSprite):
             self.alive = False
             self.game.sound.npc_death.play()
 
-    def heuristic_state(self,state,goal_state): 
+    def heuristic_state(self, state, goal_state):
         # chi phi khoang cach
-        max_distance=math.sqrt(self.game.map.cols**2 + self.game.map.rows**2)
-        distance_cost=0
+        max_distance = math.sqrt(self.game.map.cols**2 + self.game.map.rows**2)
+        distance_cost = 0
         distance_current=math.sqrt((self.map_pos[0]-self.game.player.map_pos[0])**2 + (self.map_pos[1]-self.game.player.map_pos[1])**2)
         if state == 'attack' or state == 'movement':
             distance_cost =   distance_current# Gần player khi tấn công hoặc di chuyển
@@ -485,6 +485,21 @@ class NPC(AnimatedSprite):
         return total_cost
 
 
+    # def leo_doi(self, current_state, goal_state='hide'):
+    #     """Chọn trạng thái tiếp theo tối ưu nhất dựa trên chi phí + heuristic"""
+    #     possible_states = ['attack', 'escape', 'movement', 'hide']
+    #     transition_costs = {
+    #         ('attack', 'escape'): 0.2, ('attack', 'movement'): 0.5, ('attack', 'hide'): 0.8, ('attack','attack') : 0.2,
+    #         ('escape', 'attack'): 0.2, ('escape', 'movement'): 0.8, ('escape', 'hide'): 0.2, ('escape','escape') : 0.2,
+    #         ('movement', 'attack'): 0.2, ('movement', 'escape'): 0.5, ('movement', 'hide'): 0.8, ('movement','movement') : 0.2,
+    #         ('hide', 'attack'): 0.8, ('hide', 'escape'): 0.2, ('hide', 'movement'): 0.8, ('hide','hide') : 0.3
+    #     }
+
+    #     def cost(state):
+    #         return transition_costs.get((current_state, state), 1.0) + self.heuristic_state(state, goal_state)
+
+    #     return min(possible_states, key=cost)
+
     def leo_doi(self,current_state,goal_state='hide'): 
         """Trả về trạng thái tốt nhất tiếp theo"""
         possible_states = ['attack', 'escape', 'movement', 'hide']
@@ -496,15 +511,17 @@ class NPC(AnimatedSprite):
             ('movement', 'attack'): 0.2, ('movement', 'escape'): 0.5, ('movement', 'hide'): 0.8, ('movement','movement') : 0.2,
             ('hide', 'attack'): 0.8, ('hide', 'escape'): 0.2, ('hide', 'movement'): 0.8, ('hide','hide') : 0.3
         }
-        best_state=current_state
+
+        best_state = current_state
         
-        best_cost=transition_costs.get((current_state,current_state),1.0) + self.heuristic_state(current_state,goal_state)
+        best_cost = transition_costs.get((current_state, current_state),1.0) + self.heuristic_state(current_state,goal_state)
         
         for next_state in possible_states: 
-            new_cost=transition_costs.get((current_state,next_state),1.0) + self.heuristic_state(next_state,goal_state)
+            new_cost = transition_costs.get((current_state,next_state),1.0) + self.heuristic_state(next_state,goal_state)
             if new_cost < best_cost: 
-                best_cost=new_cost
-                best_state=next_state
+                best_cost = new_cost
+                best_state = next_state
+
         return best_state
 
 
