@@ -8,7 +8,6 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán tìm kiếm trong môn Trí Tuệ Nhân Tạo.
 
 ![Alt text](screenshot1.gif)
-![Alt text](screenshot2.gif)
 ---
 
 ## 🧠 Các thuật toán tìm kiếm & cách hoạt động
@@ -48,30 +47,26 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 ---
 
 ### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
-
 - **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
-
 - **Cách hoạt động**:
   - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
-  - Trạng thái `state`: tọa độ (x, y)
-  - Hành động `action`: `[bước trái, bước phải, bước lên, bước xuống]`
-
+  - Công thức cập nhật:
+    ```python
+    Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
+    ```
+    - `state`: trạng thái hiện tại
+    - `action`: hành động được chọn
+    - `r`: phần thưởng nhận được sau khi thực hiện hành động
+    - `state'`: trạng thái mới sau hành động
+    - `α`: tốc độ học
+    - `γ`: hệ số chiết khấu tương lai
+  - Trạng thái gồm: máu hiện tại, khoảng cách đến người chơi, vị trí hiện tại, v.v.
+- **Ứng dụng**:
+  - NPC dần học được hành vi như:
+    - Tìm chỗ hồi máu khi máu yếu
+    - Ưu tiên tấn công khi có lợi thế
+  - NPC trở nên **càng thông minh sau mỗi lần lượt tìm được vị trí hồi máu**.
 ---
-
-**🧮 Công thức tổng quát:** (với mọi trạng thái và hành động có thể thực hiện)
-
-> Phiên bản toán học:
-
-$$
-\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
-Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
-$$
-
-> Phiên bản mã giả:
-
-```python
-Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
-# (với mỗi state và mọi action có thể thực hiện)
 #### 🎲 Chiến lược ε-greedy – Khám phá và khai thác của Q-Learning
 
 Để cân bằng giữa việc **khám phá hành vi mới** và **khai thác hành vi đã học**, NPC sử dụng chiến lược **epsilon-greedy (ε-greedy)**:
