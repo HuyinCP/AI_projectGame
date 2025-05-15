@@ -68,8 +68,8 @@ $$
 Trong Python:
 
 ```python
-Q[state][action] = Q[state][action] + alpha * (
-    reward + gamma * max(Q[next_state]) - Q[state][action]
+Q[s][s] = Q[s][a] + alpha * (
+    reward + gamma * max(Q[next_state]) - Q[s'][a']
 )
 ```
 ---
