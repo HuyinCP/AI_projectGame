@@ -8,6 +8,7 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán tìm kiếm trong môn Trí Tuệ Nhân Tạo.
 
 ![Alt text](screenshot1.gif)
+![Alt text](screenshot2.gif)
 ---
 
 ## 🧠 Các thuật toán tìm kiếm & cách hoạt động
@@ -61,6 +62,14 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
     - `α`: tốc độ học
     - `γ`: hệ số chiết khấu tương lai
   - Trạng thái gồm: máu hiện tại, khoảng cách đến người chơi, vị trí hiện tại, v.v.
+**🧮 Công thức tổng quát:** (với mọi trạng thái và hành động có thể thực hiện)
+
+> Phiên bản toán học:
+
+$$
+\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
+Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
+$$
 - **Ứng dụng**:
   - NPC dần học được hành vi như:
     - Tìm chỗ hồi máu khi máu yếu
