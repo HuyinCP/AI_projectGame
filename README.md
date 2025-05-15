@@ -47,33 +47,38 @@ Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?
 
 ---
 
-### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
-- **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
-- **Cách hoạt động**:
-  - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
-  - Công thức cập nhật:
-    
-$$
-\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
-Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
-$$
-    ```python
-    Q[state][action] = Q[state][action] + α * [r + γ * max(Q[state'][action']) - Q[state][action]]
-    ```
-    - `state`: trạng thái hiện tại
-    - `action`: hành động được chọn
-    - `r`: phần thưởng nhận được sau khi thực hiện hành động
-    - `state'`: trạng thái mới sau hành động
-    - `α`: tốc độ học
-    - `γ`: hệ số chiết khấu tương lai
-  - Trạng thái gồm: máu hiện tại, khoảng cách đến người chơi, vị trí hiện tại, v.v.
+# 🤖 Q-Learning NPC Behavior
 
+Dự án mô phỏng cách một NPC học cách tự hành động thông minh như **tìm chỗ hồi máu khi máu yếu**, **tấn công khi có lợi thế**, v.v. bằng thuật toán **Q-Learning**.
 
-- **Ứng dụng**:
-  - NPC dần học được hành vi như:
-    - Tìm chỗ hồi máu khi máu yếu
-    - Ưu tiên tấn công khi có lợi thế
-  - NPC trở nên **càng thông minh sau mỗi lần lượt tìm được vị trí hồi máu**.
+## 📌 Mục tiêu
+Xây dựng một agent (NPC) có thể tự học hành vi thông qua trải nghiệm tương tác với môi trường.
+
+## 🧠 Q-Learning là gì?
+
+Q-Learning là một thuật toán học tăng cường (Reinforcement Learning) giúp agent học cách hành động tốt nhất trong từng trạng thái.
+
+### 🔁 Cập nhật Q-Table:
+Công thức cập nhật Q-Value:
+
+$$
+Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a'} Q(s', a') - Q(s, a) \right]
+$$
+
+- `s`: trạng thái hiện tại  
+- `a`: hành động thực hiện  
+- `r`: phần thưởng sau hành động  
+- `s'`: trạng thái sau khi thực hiện hành động  
+- `α`: learning rate (tốc độ học)  
+- `γ`: discount factor (hệ số chiết khấu tương lai)
+
+Trong Python:
+
+```python
+Q[state][action] = Q[state][action] + alpha * (
+    reward + gamma * max(Q[next_state]) - Q[state][action]
+)
+```
 ---
 #### 🎲 Chiến lược ε-greedy – Khám phá và khai thác của Q-Learning
 
