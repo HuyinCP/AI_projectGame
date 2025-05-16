@@ -68,9 +68,7 @@ $$
 Trong Python:
 
 ```python
-Q[s][s] = Q[s][a] + alpha * (
-    reward + gamma * max(Q[next_state]) - Q[s'][a']
-)
+Q[s][s] = Q[s][a] + alpha * (reward + gamma * max(Q[next_state]) - Q[s'][a'])
 ```
 ---
 #### 🎲 Chiến lược ε-greedy – Khám phá và khai thác của Q-Learning
