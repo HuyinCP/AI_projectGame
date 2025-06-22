@@ -1,131 +1,137 @@
-# XÂY DỰNG GAME BẮN SÚNG 3D VÀ ỨNG DỤNG CÁC THUẬT TOÁN TÌM KIẾM CHO NPC
+# 3D SHOOTING GAME WITH AI SEARCH ALGORITHMS FOR NPC BEHAVIOR
 
-- HCMC University of Technology and Education
-- **Môn**: Trí Tuệ Nhân Tạo
-- **Giảng viên hướng dẫn**: TS. Phan Thị Huyền Trang
+* HCMC University of Technology and Education
+* **Course**: Artificial Intelligence
+* **Supervisor**: Dr. Phan Thi Huyen Trang
 
-Giao diện thiết kế dựa trên [video này](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s) và phát triển và xây dựng thuật toán cho NPC nhằm tối ưu các hành vi mà NPC thực hiện.
-Đây là một trò chơi bắn súng góc nhìn thứ nhất (FPS) sử dụng kỹ thuật **Raycasting 3D** để mô phỏng không gian ba chiều trên mặt phẳng 2D. Điểm nổi bật của dự án là **NPC thông minh**, có khả năng **tìm đường, truy đuổi, ẩn nấp và tự học hành vi chiến thuật** thông qua các thuật toán tìm kiếm trong môn Trí Tuệ Nhân Tạo.
+The interface design is inspired by [this video](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s). We developed and implemented intelligent behavior for NPCs using search algorithms to optimize their actions.
+
+This is a **first-person shooter (FPS)** game using **3D Raycasting** to simulate 3D environments on a 2D grid. A key highlight is the **smart NPCs** that can **navigate, chase, hide, and learn tactical behavior** using various AI search algorithms.
 
 ![Alt text](screenshot1.gif)
 ![Alt text](screenshot2.gif)
----
-
-## 🧠 Các thuật toán tìm kiếm & cách hoạt động
-
-### 🌟 A* (A-star Search) – Tìm đường hiệu quả
-- **Mục tiêu**: Giúp NPC tìm đường ngắn nhất đến mục tiêu.
-- **Cách hoạt động**:
-  - Mỗi bước tìm kiếm dựa trên công thức
-    ```python
-    f(current_state) = g(current_state) + h(current_state)
-    ```
-    - `g(current_state)` là chi phí từ điểm bắt đầu đến vị trí hiện tại.
-    - `h(current_state)` là ước lượng khoảng cách từ vị trí hiện tại đến mục vị trí mục tiêu.
-  - Thuật toán tham lam bằng mở rộng các ô có `f(current_state)` nhỏ nhất trước → đảm bảo vừa nhanh vừa tối ưu.
-- **Ứng dụng trong game**: NPC dùng A* để di chuyển thông minh qua bản đồ mê cung, tránh vật cản và đi đến mục tiêu hiệu quả.
 
 ---
 
-### 🧠 Belief Map – Bản đồ niềm tin
-- **Mục tiêu**: Giúp NPC tiếp tục truy vết người chơi ngay cả khi không còn nhìn thấy.
-- **Cách hoạt động**:
-  - Khi mất dấu người chơi, NPC lưu lại vị trí cuối cùng quan sát được.
-  - Sau đó cập nhật **"niềm tin"** về vị trí mới dựa vào chuyển động trước đó.
-  - NPC sẽ tìm đến các vị trí có khả năng cao người chơi xuất hiện (dựa trên belief).
-- **Ứng dụng**: Giúp hành vi của NPC trở nên **thực tế và không bị ngớ ngẩn khi người chơi trốn khỏi tầm nhìn**.
+## 🧠 Implemented Search Algorithms & How They Work
+
+### 🌟 A\* (A-star Search) – Efficient Pathfinding
+
+* **Purpose**: Helps NPCs find the shortest path to a target.
+* **How it works**:
+
+  ```python
+  f(current_state) = g(current_state) + h(current_state)
+  ```
+
+  * `g(current_state)`: cost from the start to current position.
+  * `h(current_state)`: heuristic estimate from current to goal.
+  * The algorithm selects the path with the lowest `f()` value.
+* **In the game**: NPCs use A\* to navigate mazes, avoid obstacles, and reach goals intelligently.
 
 ---
 
-### ⛰️ Hill Climbing – Leo đồi chiến lược
-- **Mục tiêu**: Giúp NPC ra quyết định hành vi chiến thuật như tấn công, rút lui, đi tuần.
-- **Cách hoạt động**:
-  - Với mỗi hành động khả thi (di chuyển, tấn công, chạy trốn...), NPC tính điểm lợi ích (heuristic).
-  - Hành động có lợi ích cao nhất được chọn (leo lên "đồi" giá trị).
-  - Nếu không còn lựa chọn tốt hơn → dừng tại điểm cực đại cục bộ.
-- **Ứng dụng**: Khi NPC còn ít máu, nó có thể chọn rút lui về chỗ hồi máu thay vì cố lao vào chiến đấu → hành vi **linh hoạt và hợp lý hơn**.
+### 🧠 Belief Map – Prediction Map
+
+* **Purpose**: Allows NPCs to continue tracking the player even when they are out of sight.
+* **How it works**:
+
+  * When vision is lost, NPCs store the last seen location.
+  * NPCs estimate likely positions based on prior movements.
+  * They move to areas with high "belief" probability.
+* **In the game**: NPCs behave more realistically and don't stop when players hide.
 
 ---
 
-### 🤖 Q-Learning – Tự học hành vi qua trải nghiệm
-- **Mục tiêu**: Giúp NPC học cách tìm vị trí hồi máu (khi máu yếu)
-- **Cách hoạt động**:
-  - NPC lưu bảng Q-Table, mỗi ô tương ứng với cặp **(trạng thái, hành động)** và giá trị kỳ vọng.
-  - Công thức cập nhật:
+### ⛰️ Hill Climbing – Tactical Behavior
 
-$$
-\forall \, s \in \mathcal{S}, \, \forall \, a \in \mathcal{A}(s): \quad
-Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \cdot \max_{a' \in \mathcal{A}(s')} Q(s', a') - Q(s, a) \right]
-$$
+* **Purpose**: Helps NPCs make strategic choices: attack, retreat, patrol.
+* **How it works**:
 
-- `s`: trạng thái hiện tại  
-- `a`: hành động thực hiện  
-- `r`: phần thưởng sau hành động  
-- `s'`: trạng thái sau khi thực hiện hành động  
-- `α`: learning rate (tốc độ học)  
-- `γ`: discount factor (hệ số chiết khấu tương lai)
+  * NPCs evaluate the utility of available actions.
+  * Choose the highest-scoring action.
+  * Stop if no better option exists (local maximum).
+* **In the game**: NPCs can choose to heal when low on HP or retreat instead of fighting recklessly.
 
-Trong Python:
-
-```python
-Q[s][s] = Q[s][a] + alpha * (reward + gamma * max(Q[next_state]) - Q[s'][a'])
-```
 ---
-#### 🎲 Chiến lược ε-greedy – Khám phá và khai thác của Q-Learning
 
-Để cân bằng giữa việc **khám phá hành vi mới** và **khai thác hành vi đã học**, NPC sử dụng chiến lược **epsilon-greedy (ε-greedy)**:
+### 🤖 Q-Learning – Learning from Experience
 
-- Với xác suất `ε`: chọn **hành động ngẫu nhiên** → khám phá hành vi mới.
-- Với xác suất `1 - ε`: chọn **hành động tốt nhất** từ bảng Q → khai thác kinh nghiệm cũ.
-- Càng về sau, xác suất khám phá (`ε`) sẽ **giảm dần**, điều này giúp NPC **ưu tiên khai thác các hành động đã học** thay vì liên tục thử hành động ngẫu nhiên.
+* **Purpose**: Enables NPCs to learn how to find healing zones when low on HP.
 
-> Lý do: Ban đầu, NPC cần khám phá nhiều hành động khác nhau để hiểu môi trường. Nhưng khi đã có đủ dữ liệu và kinh nghiệm, việc khai thác (chọn hành động tốt nhất đã học) sẽ giúp NPC tối ưu hiệu quả hơn.
+* **How it works**:
 
-- Thường sử dụng công thức giảm dần `ε` theo mỗi vòng lặp (episode):
-  
+  ```
+  Q(s, a) = Q(s, a) + alpha * (reward + gamma * max(Q(s') - Q(s, a)))
+  ```
+
+  * `s`: current state
+  * `a`: chosen action
+  * `r`: reward
+  * `s'`: next state
+  * `α`: learning rate
+  * `γ`: discount factor
+
+* **In Python**:
+
+  ```python
+  Q[s][a] = Q[s][a] + alpha * (reward + gamma * max(Q[next_state]) - Q[s][a])
+  ```
+
+#### 🎲 ε-greedy Strategy – Balancing Exploration and Exploitation
+
+* With probability `ε`: choose a **random action** (explore)
+* With probability `1 - ε`: choose the **best known action** (exploit)
+* Over time, `ε` **decreases**, shifting from exploring to exploiting
+
 ```python
 epsilon = max(epsilon_min, epsilon * decay_rate)
-```
-```python
+
 import random
 if random.uniform(0, 1) < epsilon:
-    action = random.choice(possible_actions)  # Khám phá
+    action = random.choice(possible_actions)
 else:
-    action = max(Q[state], key=Q[state].get)  # Khai thác
+    action = max(Q[state], key=Q[state].get)
 ```
-## 🔥 Tính năng nổi bật
-
-- ✅ **Raycasting 3D**: Hiển thị không gian 3D trong môi trường 2D.
-- ✅ **Hành vi NPC linh hoạt**: Biết truy đuổi, rút lui, tấn công có chiến lược. (tính năng mới so với bản cũ)
-- ✅ **Học hỏi qua trải nghiệm**: NPC ngày càng thông minh trong việc tìm vị trí hồi máu nhờ Q-Learning. (tính năng mới so với bản cũ)
-- ✅ **Thử thách mê cung**: Kiểm tra khả năng điều hướng và truy đuổi trong môi trường phức tạp. (tính năng mới so với bản cũ)
-- ✅ **Giao diện FPS**: Điều khiển bằng chuột và bàn phím như game 8x-9x.
 
 ---
 
-## 👨‍💻 Thành viên phát triển
+## 🔥 Key Features
 
-| Họ và tên        | Mã sinh viên  |
-|------------------|---------------|
-| Nghiêm Quang Huy | 23110222      |
-| Nguyễn Hoàng Hà  | 23110207      |
-
----
-
-## 🧰 Yêu cầu hệ thống
-
-- Python 3.x  
-- Thư viện `pygame`
+* ✅ **3D Raycasting**: Simulates 3D space on a 2D grid
+* ✅ **Smart NPC behavior**: Chasing, hiding, attacking with tactics (new features)
+* ✅ **Learning NPCs**: Use Q-learning to improve over time (new feature)
+* ✅ **Maze challenges**: Complex navigation scenarios (new feature)
+* ✅ **FPS controls**: Mouse and keyboard inputs like classic 90s shooters
 
 ---
 
-## 🚀 Hướng dẫn cài đặt & chạy game
+## 👨‍💻 Developers
 
-### 1. Tải mã nguồn
+| Name             | Student ID |
+| ---------------- | ---------- |
+| Nghiem Quang Huy | 23110222   |
+| Nguyen Hoang Ha  | 23110207   |
+
+---
+
+## 🧰 Requirements
+
+* Python 3.x
+* `pygame` library
+
+---
+
+## 🚀 Installation & How to Run
+
+### 1. Clone the repository
+
 ```bash
 git clone https://github.com/HuyinCP/AI_projectGame.git
 ```
-#### Vào folder đã clone và chạy file main.py
+
+### 2. Navigate to the project folder and run the game
+
 ```bash
 python main.py
-
+```
