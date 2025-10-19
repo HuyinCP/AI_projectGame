@@ -4,7 +4,6 @@
 * **Course**: Artificial Intelligence
 * **Supervisor**: Dr. Phan Thi Huyen Trang
 
-The interface design is inspired by [this video](https://www.youtube.com/watch?v=ECqUrT7IdqQ&t=2720s). We developed and implemented intelligent behavior for NPCs using search algorithms to optimize their actions.
 
 This is a **first-person shooter (FPS)** game using **3D Raycasting** to simulate 3D environments on a 2D grid. A key highlight is the **smart NPCs** that can **navigate, chase, hide, and learn tactical behavior** using various AI search algorithms.
 
